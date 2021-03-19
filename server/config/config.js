@@ -9,6 +9,7 @@ module.exports = {
 		host: process.env.DB_HOSTNAME || "127.0.0.1",
 		dialect: process.env.DIALECT || "postgres",
 		BCRYPT_WORK_FACTOR: 1,
+		JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || "secretKey",
 	},
 	test: {
 		username: process.env.DB_USERNAME || "root",
@@ -17,6 +18,7 @@ module.exports = {
 		host: process.env.DB_HOSTNAME || "127.0.0.1",
 		dialect: process.env.DIALECT || "postgres",
 		BCRYPT_WORK_FACTOR: 1,
+		JWT_SECRET_KEY: "secretKey",
 	},
 	production: {
 		username: process.env.DB_USERNAME,
@@ -25,5 +27,6 @@ module.exports = {
 		host: process.env.DB_HOSTNAME,
 		dialect: process.env.DIALECT || "postgres",
 		BCRYPT_WORK_FACTOR: 12,
+		JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
 	},
 };
