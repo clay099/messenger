@@ -7,6 +7,7 @@ const db = require("./models/index");
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
+const authRouter = require("./routes/auth");
 
 const { json, urlencoded } = express;
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
 app.use("/", indexRouter);
+app.use("/", authRouter);
 app.use("/ping", pingRouter);
 
 // catch 404 and forward to error handler

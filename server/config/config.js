@@ -8,6 +8,7 @@ module.exports = {
 		database: process.env.DB_NAME || "hatchways-messenger",
 		host: process.env.DB_HOSTNAME || "127.0.0.1",
 		dialect: process.env.DIALECT || "postgres",
+		BCRYPT_WORK_FACTOR: 1,
 	},
 	test: {
 		username: process.env.DB_USERNAME || "root",
@@ -15,6 +16,7 @@ module.exports = {
 		database: process.env.DB_NAME || "hatchways-messenger-test",
 		host: process.env.DB_HOSTNAME || "127.0.0.1",
 		dialect: process.env.DIALECT || "postgres",
+		BCRYPT_WORK_FACTOR: 1,
 	},
 	production: {
 		username: process.env.DB_USERNAME,
@@ -22,5 +24,6 @@ module.exports = {
 		database: process.env.DB_NAME,
 		host: process.env.DB_HOSTNAME,
 		dialect: process.env.DIALECT || "postgres",
+		BCRYPT_WORK_FACTOR: 12,
 	},
 };
