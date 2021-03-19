@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const db = require(".");
 const env = process.env.NODE_ENV || "development";
 const config = require(__dirname + "/../config/config.js")[env];
-const createError = require("http-errors");
+const createToken = require("../helpers/createToken");
 
 module.exports = (sequelize, DataTypes) => {
 	class User extends Model {
@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
 			this.username = username;
 			this.email = email;
 			this.password = password;
+		}
+
+		async authenticate(password) {
+			if ((await bcrypt.compare(password, this.password)) !== true) {
+				throw new Error("Invalid email/password");
+			}
+			let token = createToken(this.email);
+			return token;
 		}
 	}
 	User.init(
@@ -44,6 +52,15 @@ module.exports = (sequelize, DataTypes) => {
 			},
 		},
 		{
+			hooks: {
+				afterValidate: async (user, options) => {
+					const hashedPW = await bcrypt.hash(
+						user.password,
+						config.BCRYPT_WORK_FACTOR
+					);
+					user.password = hashedPW;
+				},
+			},
 			sequelize,
 			modelName: "User",
 		}
@@ -63,13 +80,24 @@ module.exports = (sequelize, DataTypes) => {
 		}
 	};
 
-	User.afterValidate(async (user) => {
-		console.dir({ user });
-		const hashedPW = await bcrypt.hash(
-			user.password,
-			config.BCRYPT_WORK_FACTOR
-		);
-		user.password = hashedPW;
-	});
+	User.login = async function ({ email, password }) {
+		try {
+			// creates a user. This will run any model validations & throw an error if they fail prior to querying the DB
+			const user = await this.findOne({ where: { email } });
+			let token = await user.authenticate(password);
+			return token;
+		} catch (error) {
+			throw error;
+		}
+	};
+
+	// User.afterValidate(async (user) => {
+	// 	const hashedPW = await bcrypt.hash(
+	// 		user.password,
+	// 		config.BCRYPT_WORK_FACTOR
+	// 	);
+	// 	user.password = hashedPW;
+	// });
+
 	return User;
 };
