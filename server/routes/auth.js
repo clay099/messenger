@@ -3,10 +3,8 @@ const createError = require("http-errors");
 const router = express.Router();
 const db = require("../models/index");
 
-const { authenticateJWT } = require("../middleware/auth");
-
 /** POST / {email:<string>, password: <string>} => {token: <string>} */
-router.post("/login", authenticateJWT, async function (req, res, next) {
+router.post("/login", async function (req, res, next) {
 	try {
 		let { email, password } = req.body;
 		if (!email || !password) {
