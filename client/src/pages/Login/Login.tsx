@@ -5,7 +5,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
-import Snackbar from "@material-ui/core/Snackbar";
+import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
 import { Link, useHistory } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
@@ -13,34 +13,12 @@ import CloseIcon from "@material-ui/icons/Close";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
-import useStyles from "./signUpUseStyles";
+import useStyles from "../../styles/useStyles";
+import useLogin from "../../hooks/useLogin";
 
-function useRegister() {
-	const history = useHistory();
-
-	const login = async (username, email, password) => {
-		console.log(email, password);
-		const res = await fetch(
-			`/auth/signup?username=${username}&email=${email}&password=${password}`
-		).then((res) => res.json());
-		console.log(res);
-		localStorage.setItem("user", res.user);
-		localStorage.setItem("token", res.token);
-		history.push("/dashboard");
-	};
-	return login;
-}
-
-export default function Register() {
+export default function Login() {
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(true);
-
-	const register = useRegister();
-
-	const handleClose = (event, reason) => {
-		if (reason === "clickaway") return;
-		setOpen(false);
-	};
 
 	const history = useHistory();
 
@@ -49,17 +27,35 @@ export default function Register() {
 		if (user) history.push("/dashboard");
 	}, [history]);
 
+	const login = useLogin();
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+
+	const snackbarHandleClose = (
+		event: React.SyntheticEvent,
+		reason: SnackbarCloseReason
+	) => {
+		if (reason === "clickaway") return;
+		setOpen(false);
+	};
+
 	return (
 		<Grid container component="main" className={classes.root}>
 			<CssBaseline />
 			<Grid item xs={false} sm={4} md={5} className={classes.image}>
 				<Box className={classes.overlay}>
 					<Hidden xsDown>
-						<img width={67} src="/images/chatBubble.png" />
+						<img
+							width={67}
+							src="/images/chatBubble.png"
+							alt="Chat Messenger Bubble"
+						/>
 						<Hidden smDown>
-							<Typography className={classes.heroText}>
+							<p className={classes.heroText}>
 								Converse with anyone with any language
-							</Typography>
+							</p>
 						</Hidden>
 					</Hidden>
 				</Box>
@@ -75,16 +71,16 @@ export default function Register() {
 			>
 				<Box className={classes.buttonHeader}>
 					<Box p={1} alignSelf="flex-end" alignItems="center">
-						<Link to="/login" className={classes.link}>
+						<Link to="/signup" className={classes.link}>
 							<Button className={classes.noAccBtn}>
-								Already have an account?
+								Don't have an account?
 							</Button>
 							<Button
-								color="background"
+								color="inherit"
 								className={classes.accBtn}
 								variant="contained"
 							>
-								Login
+								Create account
 							</Button>
 						</Link>
 					</Box>
@@ -97,7 +93,7 @@ export default function Register() {
 									component="h1"
 									variant="h5"
 								>
-									Create an account
+									Welcome back!
 								</Typography>
 							</Grid>
 						</Grid>
@@ -107,9 +103,6 @@ export default function Register() {
 								password: "",
 							}}
 							validationSchema={Yup.object().shape({
-								username: Yup.string()
-									.required("Username is required")
-									.max(40, "Username is too long"),
 								email: Yup.string()
 									.required("Email is required")
 									.email("Email is not valid"),
@@ -119,11 +112,11 @@ export default function Register() {
 									.min(6, "Password too short"),
 							})}
 							onSubmit={(
-								{ username, email, password },
+								{ email, password },
 								{ setStatus, setSubmitting }
 							) => {
 								setStatus();
-								register(username, email, password).then(
+								login(email, password).then(
 									() => {
 										// useHistory push to chat
 										console.log(email, password);
@@ -149,45 +142,11 @@ export default function Register() {
 									noValidate
 								>
 									<TextField
-										id="username"
-										label={
-											<Typography
-												className={classes.label}
-											>
-												Username
-											</Typography>
-										}
-										fullWidth
-										margin="normal"
-										InputLabelProps={{
-											shrink: true,
-										}}
-										InputProps={{
-											classes: { input: classes.inputs },
-										}}
-										name="username"
-										autoComplete="username"
-										autoFocus
-										helperText={
-											touched.username
-												? errors.username
-												: ""
-										}
-										error={
-											touched.username &&
-											Boolean(errors.username)
-										}
-										value={values.username}
-										onChange={handleChange}
-									/>
-									<TextField
 										id="email"
 										label={
-											<Typography
-												className={classes.label}
-											>
+											<p className={classes.label}>
 												E-mail address
-											</Typography>
+											</p>
 										}
 										fullWidth
 										margin="normal"
@@ -199,6 +158,7 @@ export default function Register() {
 										}}
 										name="email"
 										autoComplete="email"
+										autoFocus
 										helperText={
 											touched.email ? errors.email : ""
 										}
@@ -225,6 +185,13 @@ export default function Register() {
 										}}
 										InputProps={{
 											classes: { input: classes.inputs },
+											endAdornment: (
+												<Typography
+													className={classes.forgot}
+												>
+													Forgot?
+												</Typography>
+											),
 										}}
 										type="password"
 										autoComplete="current-password"
@@ -249,9 +216,11 @@ export default function Register() {
 											color="primary"
 											className={classes.submit}
 										>
-											Create
+											Login
 										</Button>
 									</Box>
+
+									<div style={{ height: 95 }} />
 								</form>
 							)}
 						</Formik>
@@ -265,8 +234,8 @@ export default function Register() {
 					}}
 					open={open}
 					autoHideDuration={6000}
-					onClose={handleClose}
-					message="Email already exists"
+					onClose={snackbarHandleClose}
+					message="Login failed"
 					action={
 						<React.Fragment>
 							<IconButton

@@ -99,6 +99,10 @@ const useStyles = makeStyles((theme) => ({
 		padding: "5px",
 	},
 	link: { textDecoration: "none", display: "flex", flexWrap: "nowrap" },
+	forgot: {
+		paddingRight: 10,
+		color: "#3a8dff",
+	},
 }));
 
 export default useStyles;
