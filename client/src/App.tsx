@@ -1,10 +1,10 @@
 import React from "react";
 import { MuiThemeProvider } from "@material-ui/core";
-import { theme } from "./themes/theme.js";
+import { theme } from "./themes/theme";
 // import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
 import { BrowserRouter, Route, Redirect } from "react-router-dom";
 import Login from "./pages/Login/Login";
-import Signup from "./pages/Signup/Signup";
+import Signup from "./pages/SignUp/SignUp";
 import Dashboard from "./pages/Dashboard/Dashboard";
 
 import "./App.css";
