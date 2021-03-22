@@ -4,7 +4,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -14,14 +14,15 @@ import useStyles from "../../styles/useStyles";
 import useRegister from "../../hooks/useRegister";
 import SideBanner from "../../components/SideBanner/SideBanner";
 import SignUpForm from "./SignUpForm/SignUpForm";
+import { useAuth } from "../../context/useContext";
 
 export interface handleSubmit {}
 
 export default function Register() {
 	const classes = useStyles();
-	const [open, setOpen] = React.useState(true);
-
+	const [open, setOpen] = React.useState(false);
 	const register = useRegister();
+	const { updateLoginContext } = useAuth();
 
 	const handleClose = () => {
 		setOpen(false);
@@ -34,8 +35,6 @@ export default function Register() {
 		if (reason === "clickaway") return;
 		setOpen(false);
 	};
-
-	const history = useHistory();
 
 	const handleSubmit = (
 		{
@@ -50,10 +49,10 @@ export default function Register() {
 	) => {
 		setStatus();
 		register(username, email, password).then(
-			() => {
-				// useHistory push to chat
-				console.log(email, password);
-				return;
+			(res) => {
+				// clean this up once connected to backend
+				console.log({ res });
+				updateLoginContext();
 			},
 			(error) => {
 				setSubmitting(false);
@@ -61,11 +60,6 @@ export default function Register() {
 			}
 		);
 	};
-
-	React.useEffect(() => {
-		const user = localStorage.getItem("user");
-		if (user) history.push("/dashboard");
-	}, [history]);
 
 	return (
 		<Grid container component="main" className={classes.root}>

@@ -4,7 +4,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -14,12 +14,13 @@ import useStyles from "../../styles/useStyles";
 import useLogin from "../../hooks/useLogin";
 import SideBanner from "../../components/SideBanner/SideBanner";
 import LoginForm from "./LoginForm/LoginForm";
+import { useAuth } from "../../context/useContext";
 
 export default function Login() {
 	const classes = useStyles();
-	const [open, setOpen] = React.useState(true);
-
-	const history = useHistory();
+	const [open, setOpen] = React.useState(false);
+	const { updateLoginContext } = useAuth();
+	const login = useLogin();
 
 	const handleSubmit = (
 		{ email, password }: { email: string; password: string },
@@ -30,10 +31,10 @@ export default function Login() {
 	) => {
 		setStatus();
 		login(email, password).then(
-			() => {
-				// useHistory push to chat
-				console.log(email, password);
-				return;
+			(res) => {
+				// clean this up once connected to backend
+				console.log({ res });
+				updateLoginContext();
 			},
 			(error) => {
 				setSubmitting(false);
@@ -41,13 +42,6 @@ export default function Login() {
 			}
 		);
 	};
-
-	React.useEffect(() => {
-		const user = localStorage.getItem("user");
-		if (user) history.push("/dashboard");
-	}, [history]);
-
-	const login = useLogin();
 
 	const handleClose = () => {
 		setOpen(false);
