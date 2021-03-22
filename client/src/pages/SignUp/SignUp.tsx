@@ -4,7 +4,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
-import Hidden from "@material-ui/core/Hidden";
 import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
 import { Link, useHistory } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
@@ -15,6 +14,7 @@ import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "../../styles/useStyles";
 import useRegister from "../../hooks/useRegister";
+import SideBanner from "../../components/SideBanner/SideBanner";
 
 export default function Register() {
 	const classes = useStyles();
@@ -44,22 +44,7 @@ export default function Register() {
 	return (
 		<Grid container component="main" className={classes.root}>
 			<CssBaseline />
-			<Grid item xs={false} sm={4} md={5} className={classes.image}>
-				<Box className={classes.overlay}>
-					<Hidden xsDown>
-						<img
-							width={67}
-							src="/images/chatBubble.png"
-							alt="Chat Messenger Bubble"
-						/>
-						<Hidden smDown>
-							<Typography className={classes.heroText}>
-								Converse with anyone with any language
-							</Typography>
-						</Hidden>
-					</Hidden>
-				</Box>
-			</Grid>
+			<SideBanner />
 			<Grid
 				item
 				xs={12}
