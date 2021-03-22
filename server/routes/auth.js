@@ -3,6 +3,7 @@ const createError = require("http-errors");
 const router = express.Router();
 const db = require("../models/index");
 const addToken = require("../helpers/addToken");
+const createToken = require("../helpers/createToken");
 
 /** POST / {email:<string>, password: <string>} => {token: <string>} */
 router.post("/login", async function (req, res, next) {
@@ -12,11 +13,13 @@ router.post("/login", async function (req, res, next) {
 			throw new Error(`Please include all fields: email, password`);
 		}
 
-		let token = await db.User.login({ email, password });
+		let user = await db.User.login({ email, password });
+		const token = createToken(user.email);
+
 		// adds token as cookie
 		addToken(res, token);
 
-		return res.json("logged in");
+		return res.json({ message: "logged in" });
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));
@@ -47,7 +50,7 @@ router.post("/register", async function (req, res, next) {
 		// adds token as cookie
 		addToken(res, token);
 
-		return res.status(201).json(`New user created`);
+		return res.status(201).json({ message: `New user created` });
 	} catch (error) {
 		console.error({ error });
 		let errorText;

@@ -73,8 +73,7 @@ module.exports = (sequelize, DataTypes) => {
 				username,
 				password,
 			});
-			const token = createToken(this.email);
-			return { token };
+			return { user };
 		} catch (error) {
 			console.error(error);
 			throw error;
