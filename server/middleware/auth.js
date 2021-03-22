@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.js")[env];
+const config = require("../helpers/getConfig");
 
 /** Middleware: Authenticate user. */
 function authenticateJWT(req, res, next) {
@@ -14,7 +13,7 @@ function authenticateJWT(req, res, next) {
 
 		return next();
 	} catch (err) {
-		return next();
+		return next(err);
 	}
 }
 

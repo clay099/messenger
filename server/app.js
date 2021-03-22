@@ -3,7 +3,6 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const db = require("./models/index");
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");

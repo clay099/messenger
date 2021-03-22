@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
-const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.js")[env];
+const config = require("../helpers/getConfig");
 
 /** return signed JWT from user data. */
 function createToken(email) {
