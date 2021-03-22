@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
+import bgImg from "../Images/bg-img.png";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 		whiteSpace: "nowrap",
 	},
 	image: {
-		backgroundImage: "url(./images/bg-img.png)",
+		backgroundImage: `url(${bgImg})`,
 		backgroundRepeat: "no-repeat",
 		backgroundSize: "cover",
 		backgroundPosition: "center",
@@ -81,7 +82,11 @@ const useStyles = makeStyles((theme) => ({
 		width: "100%", // Fix IE 11 issue.
 		marginTop: theme.spacing(1),
 	},
-	label: { fontSize: 19, color: "rgb(0,0,0,0.4)", paddingLeft: "5px" },
+	label: {
+		fontSize: 19,
+		color: "rgb(0,0,0,0.4)",
+		paddingLeft: "5px",
+	},
 	submit: {
 		margin: theme.spacing(3, 2, 2),
 		padding: 10,
