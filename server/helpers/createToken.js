@@ -3,6 +3,7 @@ const config = require("../helpers/getConfig");
 
 /** return signed JWT from user data. */
 function createToken(email) {
+	console.log("test", { email });
 	let payload = {
 		email,
 	};

@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const Sequelize = require("sequelize");
+const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
 const db = require(".");
 const config = require("../helpers/getConfig");
@@ -14,7 +15,14 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			// define association here
+			this.belongsToMany(models.Chat, {
+				through: models.UserChat,
+				foreignKey: "userEmail",
+			});
+			this.hasMany(models.UserChat, { foreignKey: "userEmail" });
+			this.hasMany(models.Message, {
+				foreignKey: "senderEmail",
+			});
 		}
 
 		constructor({ username, email, password }) {
@@ -31,7 +39,27 @@ module.exports = (sequelize, DataTypes) => {
 			let token = createToken(this.email);
 			return token;
 		}
+
+		async getOtherUsers() {
+			try {
+				let users = await User.findAll({
+					where: { email: { [Op.not]: this.email } },
+				});
+				const userDetails = [];
+				// only provided needed info
+				users.forEach((user) => {
+					userDetails.push({
+						username: user.username,
+						email: user.email,
+					});
+				});
+				return userDetails;
+			} catch (error) {
+				console.error({ error });
+			}
+		}
 	}
+
 	User.init(
 		{
 			username: {
@@ -73,7 +101,7 @@ module.exports = (sequelize, DataTypes) => {
 				username,
 				password,
 			});
-			return { user };
+			return user;
 		} catch (error) {
 			console.error(error);
 			throw error;
@@ -87,6 +115,17 @@ module.exports = (sequelize, DataTypes) => {
 			if (!user) throw new Error("Invalid email/password");
 			let token = await user.authenticate(password);
 			return token;
+		} catch (error) {
+			throw error;
+		}
+	};
+
+	// only to be used on routes which have auth middleware as that will provide the verification that our user is genuine
+	User.getDetails = async function (email) {
+		try {
+			const user = await this.findOne({ where: { email } });
+			if (!user) throw new Error("User could not be found");
+			return user;
 		} catch (error) {
 			throw error;
 		}
