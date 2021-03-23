@@ -1,19 +1,18 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
-import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { FormikHelpers } from "formik";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "../../styles/useStyles";
-import useRegister from "../../hooks/useRegister";
+import register from "../../helpers/register";
 import SideBanner from "../../components/SideBanner/SideBanner";
 import SignUpForm from "./SignUpForm/SignUpForm";
+import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useContext";
 
 export interface handleSubmit {}
@@ -21,7 +20,6 @@ export interface handleSubmit {}
 export default function Register() {
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(false);
-	const register = useRegister();
 	const { updateLoginContext } = useAuth();
 
 	const handleClose = () => {
@@ -74,21 +72,12 @@ export default function Register() {
 				component={Paper}
 				square
 			>
-				<Box className={classes.buttonHeader}>
-					<Box p={1} alignSelf="flex-end" alignItems="center">
-						<Link to="/login" className={classes.link}>
-							<Button className={classes.noAccBtn}>
-								Already have an account?
-							</Button>
-							<Button
-								color="inherit"
-								className={classes.accBtn}
-								variant="contained"
-							>
-								Login
-							</Button>
-						</Link>
-					</Box>
+				<Box className={classes.authWrapper}>
+					<AuthHeader
+						linkTo="/login"
+						asideText="Already have an account?"
+						btnText="Login"
+					/>
 					<Box width="100%" maxWidth={450} p={3} alignSelf="center">
 						<Grid container>
 							<Grid item xs>

@@ -1,26 +1,24 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
-import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { FormikHelpers } from "formik";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "../../styles/useStyles";
-import useLogin from "../../hooks/useLogin";
+import login from "../../helpers/login";
 import SideBanner from "../../components/SideBanner/SideBanner";
 import LoginForm from "./LoginForm/LoginForm";
+import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useContext";
 
 export default function Login() {
 	const classes = useStyles();
 	const [open, setOpen] = React.useState(false);
 	const { updateLoginContext } = useAuth();
-	const login = useLogin();
 
 	const handleSubmit = (
 		{ email, password }: { email: string; password: string },
@@ -68,22 +66,12 @@ export default function Login() {
 				component={Paper}
 				square
 			>
-				<Box className={classes.buttonHeader}>
-					<Box p={1} alignSelf="flex-end" alignItems="center">
-						<Link to="/signup" className={classes.link}>
-							<Button className={classes.noAccBtn}>
-								Don't have an account?
-							</Button>
-							<Button
-								color="inherit"
-								className={classes.accBtn}
-								variant="contained"
-							>
-								Create account
-							</Button>
-						</Link>
-					</Box>
-
+				<Box className={classes.authWrapper}>
+					<AuthHeader
+						linkTo="/signup"
+						asideText="Don't have an account?"
+						btnText="Create account"
+					/>
 					<Box width="100%" maxWidth={450} p={3} alignSelf="center">
 						<Grid container>
 							<Grid item xs>

@@ -3,7 +3,7 @@ import Hidden from "@material-ui/core/Hidden";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "../../styles/useStyles";
-import chatBubble from "../../Images/chatBubble.png";
+import chatBubble from "../../Images/bubble.svg";
 
 const SideBanner = () => {
 	const classes = useStyles();

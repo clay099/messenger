@@ -35,12 +35,11 @@ const useStyles = makeStyles((theme) => ({
 		alignItems: "center",
 		justifyContent: "center",
 	},
-	buttonHeader: {
+	authWrapper: {
 		display: "flex",
 		alignItems: "flex-start",
 		justifyContent: "space-between",
 		flexDirection: "column",
-		bgcolor: "background.paper",
 		minHeight: "100vh",
 		paddingTop: 23,
 	},
@@ -54,13 +53,16 @@ const useStyles = makeStyles((theme) => ({
 		boxShadow: "none",
 		marginRight: 35,
 	},
-	noAccBtn: {
+	accAside: {
 		fontSize: 14,
 		color: "#b0b0b0",
 		fontWeight: 400,
 		textAlign: "center",
-		marginRight: 21,
+		marginRight: 35,
 		whiteSpace: "nowrap",
+		display: "flex",
+		alignItems: "center",
+		padding: "1rem 0",
 	},
 	image: {
 		backgroundImage: `url(${bgImg})`,
@@ -103,7 +105,14 @@ const useStyles = makeStyles((theme) => ({
 		height: "2rem",
 		padding: "5px",
 	},
-	link: { textDecoration: "none", display: "flex", flexWrap: "nowrap" },
+	link: { textDecoration: "none" },
+	authHeader: {
+		alignSelf: "flex-end",
+		justifyContent: "flex-end",
+		alignItems: "center",
+		display: "flex",
+		flexWrap: "wrap",
+	},
 	forgot: {
 		paddingRight: 10,
 		color: "#3a8dff",

@@ -4,8 +4,9 @@ export const theme = createMuiTheme({
 	typography: {
 		fontFamily: '"Open Sans", "sans-serif", "Roboto"',
 		fontSize: 12,
-		h1: {
-			// could customize the h1 variant as well
+		button: {
+			textTransform: "none",
+			fontWeight: 700,
 		},
 	},
 	palette: {
