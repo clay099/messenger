@@ -1,3 +1,4 @@
+/**Add token to cookie */
 function addToken(res, token) {
 	res.cookie("token", token, {
 		// lasts for 24 hours

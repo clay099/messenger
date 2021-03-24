@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const config = require("../helpers/getConfig");
+const createError = require("http-errors");
 
 /** Middleware: Authenticate user. */
 function authenticateJWT(req, res, next) {
@@ -10,6 +11,14 @@ function authenticateJWT(req, res, next) {
 
 		// assuming payload is verified you can now grab the user email by "req.user.email" from any route which is authenticated
 		req.user = payload;
+
+		if (!req.user.email)
+			return next(
+				createError(
+					400,
+					"Email not found in cookies, please login again to update your cookies"
+				)
+			);
 
 		return next();
 	} catch (err) {

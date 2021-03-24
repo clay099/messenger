@@ -40,20 +40,30 @@ module.exports = (sequelize, DataTypes) => {
 			return token;
 		}
 
-		async getOtherUsers() {
+		/** find a maximum of 20 users not including the current user order by email and username
+		 *
+		 * Optional to include a searchQuery which will filter results by username or email
+		 */
+		async getOtherUsers(searchQuery) {
 			try {
+				searchQuery = searchQuery ? searchQuery : "";
 				let users = await User.findAll({
-					where: { email: { [Op.not]: this.email } },
+					attributes: ["username", "email"],
+					where: {
+						email: {
+							[Op.not]: this.email,
+						},
+						[Op.or]: {
+							email: {
+								[Op.substring]: searchQuery,
+							},
+							username: { [Op.substring]: searchQuery },
+						},
+					},
+					limit: 20,
+					order: ["email", "username"],
 				});
-				const userDetails = [];
-				// only provided needed info
-				users.forEach((user) => {
-					userDetails.push({
-						username: user.username,
-						email: user.email,
-					});
-				});
-				return userDetails;
+				return users;
 			} catch (error) {
 				console.error({ error });
 			}
