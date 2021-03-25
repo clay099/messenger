@@ -1,19 +1,22 @@
 const db = require("../models/index");
 const { Op } = require("sequelize");
-const createError = require("http-errors");
+const getUserChatIds = require("./getUserChatIds");
 
 /**checks if other user already has a chat with loggedIn user*/
-async function checkChatExists(chatRooms, otherUserEmail) {
-	console.log({ chatRooms, otherUserEmail });
-	const chatArray = await db.UserChat.findAll({
-		where: {
-			chatId: { [Op.or]: chatRooms },
-			userEmail: otherUserEmail,
-		},
-	});
+async function checkChatExists(userEmail, otherUserEmail) {
+	const chatRooms = await getUserChatIds(userEmail);
 
-	if (chatArray.length > 0) {
-		throw new Error("Chat between users has already been created");
+	if (chatRooms.length > 0) {
+		const chatArray = await db.UserChat.findAll({
+			where: {
+				chatId: { [Op.or]: chatRooms },
+				userEmail: otherUserEmail,
+			},
+		});
+
+		if (chatArray.length > 0) {
+			throw new Error("Chat between users has already been created");
+		}
 	}
 }
 

@@ -17,10 +17,8 @@ const getChatMessages = require("../helpers/getChatMessages");
 router.get("/", authenticateJWT, async function (req, res, next) {
 	try {
 		const email = req.user.email;
-		// gets an array with the chatId the user is involved with
-		const chatRooms = await getUserChatIds(email);
 		// data for other users involved with chats user is involved with
-		const chatData = await getOtherChatUsers(chatRooms, email);
+		const chatData = await getOtherChatUsers(email);
 
 		return res.json(chatData);
 	} catch (error) {
@@ -34,9 +32,8 @@ router.get("/", authenticateJWT, async function (req, res, next) {
  * create new chat between users
  */
 router.post("/", authenticateJWT, async function (req, res, next) {
-	const userEmail = req.user.email;
-
 	try {
+		const userEmail = req.user.email;
 		// email of other user to connect with
 		let { email: otherUserEmail } = req.body;
 		if (!otherUserEmail) {
@@ -45,19 +42,13 @@ router.post("/", authenticateJWT, async function (req, res, next) {
 
 		// check that other user actually exists in database. It will through an error if not found or return their object
 		const otherUser = await getUser(otherUserEmail);
-
-		// users chat rooms they are involved with,
-		const chatRooms = await getUserChatIds(userEmail);
-		// check that user actually has any chats to check
-		if (chatRooms > 0) {
-			// through an error if user chat room already exists
-			await checkChatExists(chatRooms, otherUserEmail);
-		}
-
 		const user = await getUser(userEmail);
 
+		// throw an error if user chat room already exists
+		await checkChatExists(userEmail, otherUserEmail);
+
 		// actually create chat
-		const chat = await createChatRoom(user, otherUser);
+		const chat = await createChatRoom([user, otherUser]);
 
 		return res
 			.status(201)

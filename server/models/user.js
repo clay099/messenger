@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
 		 */
 		async getOtherUsers(searchQuery) {
 			try {
-				searchQuery = searchQuery ? searchQuery : "";
+				searchQuery = searchQuery ? "%" + searchQuery + "%" : "%";
 				let users = await User.findAll({
 					attributes: ["username", "email"],
 					where: {
@@ -55,9 +55,9 @@ module.exports = (sequelize, DataTypes) => {
 						},
 						[Op.or]: {
 							email: {
-								[Op.substring]: searchQuery,
+								[Op.iLike]: searchQuery,
 							},
-							username: { [Op.substring]: searchQuery },
+							username: { [Op.iLike]: searchQuery },
 						},
 					},
 					limit: 20,
