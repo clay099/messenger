@@ -1,7 +1,8 @@
+/**Add token to cookie */
 function addToken(res, token) {
 	res.cookie("token", token, {
-		// lasts for 1 hour
-		expires: new Date(Date.now() + 60 * 60 * 100),
+		// lasts for 24 hours
+		expires: new Date(Date.now() + 24 * 60 * 60 * 100),
 		httpOnly: true,
 	});
 }

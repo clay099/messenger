@@ -13,9 +13,7 @@ router.post("/login", async function (req, res, next) {
 			throw new Error(`Please include all fields: email, password`);
 		}
 
-		let user = await db.User.login({ email, password });
-		const token = createToken(user.email);
-
+		let token = await db.User.login({ email, password });
 		// adds token as cookie
 		addToken(res, token);
 
@@ -41,12 +39,12 @@ router.post("/register", async function (req, res, next) {
 			throw new Error(`Password is required to be 6 characters long`);
 		}
 
-		let { token } = await db.User.register({
+		let user = await db.User.register({
 			email,
 			password,
 			username,
 		});
-
+		const token = createToken(user.email);
 		// adds token as cookie
 		addToken(res, token);
 
@@ -65,7 +63,6 @@ router.post("/register", async function (req, res, next) {
 			// gives general message if about does not catch
 			errorText = error.message;
 		}
-		console.log({ errorText });
 		return next(createError(400, errorText));
 	}
 });
