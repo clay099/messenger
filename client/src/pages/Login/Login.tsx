@@ -9,11 +9,13 @@ import CloseIcon from "@material-ui/icons/Close";
 import { FormikHelpers } from "formik";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "../../styles/useStyles";
-import login from "../../helpers/login";
-import SideBanner from "../../components/SideBanner/SideBanner";
+import login from "../../helpers/APICalls/login";
+import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import LoginForm from "./LoginForm/LoginForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
-import { useAuth } from "../../context/useContext";
+import { useAuth } from "../../context/useAuthContext";
+import { User } from "../../interface/User";
+import { mockLoggedInUser } from "../../mocks/mockUser";
 
 export default function Login() {
 	const classes = useStyles();
@@ -32,7 +34,8 @@ export default function Login() {
 			(res) => {
 				// clean this up once connected to backend
 				console.log({ res });
-				updateLoginContext();
+				// upon connection, get this from backend
+				updateLoginContext(mockLoggedInUser);
 			},
 			(error) => {
 				setSubmitting(false);
@@ -56,7 +59,7 @@ export default function Login() {
 	return (
 		<Grid container component="main" className={classes.root}>
 			<CssBaseline />
-			<SideBanner />
+			<AuthSideBanner />
 			<Grid
 				item
 				xs={12}
