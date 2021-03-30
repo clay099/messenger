@@ -1,16 +1,16 @@
 import { FunctionComponent } from "react";
 import { ChatContext } from "../context/useChatContext";
 import mockChatMessages from "./mockChatMessages";
+import mockChats from "./mockChats";
 
 const MockUseChatProvider: FunctionComponent = ({ children }) => {
 	return (
 		<ChatContext.Provider
 			value={{
-				chatId: 1,
-				selectChatId: jest.fn(),
-				otherUser: { email: "mock@gmail.com", username: "mock user" },
-				saveOtherUser: jest.fn(),
+				activeChat: mockChats[0],
+				selectActiveChat: jest.fn(),
 				activeChatMessages: mockChatMessages,
+				readChatIds: new Set<number>(),
 			}}
 		>
 			{children}

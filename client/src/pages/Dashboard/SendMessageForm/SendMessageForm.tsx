@@ -5,12 +5,12 @@ import { useChat } from "../../../context/useChatContext";
 
 const SendMessageForm = () => {
 	const [message, setMessage] = useState("");
-	const { chatId } = useChat();
+	const { activeChat } = useChat();
 
 	const handleSubmit = async (event: SyntheticEvent) => {
 		event.preventDefault();
-		if (chatId) {
-			await submitMessage(chatId, message);
+		if (activeChat) {
+			await submitMessage(activeChat.chatId, message);
 			setMessage("");
 		}
 	};

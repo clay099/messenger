@@ -8,13 +8,12 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { FormikHelpers } from "formik";
 import Typography from "@material-ui/core/Typography";
-import useStyles from "../../styles/useStyles";
+import useStyles from "./useStyles";
 import login from "../../helpers/APICalls/login";
 import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import LoginForm from "./LoginForm/LoginForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useAuthContext";
-import { User } from "../../interface/User";
 import { mockLoggedInUser } from "../../mocks/mockUser";
 
 export default function Login() {

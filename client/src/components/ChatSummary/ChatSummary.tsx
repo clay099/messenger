@@ -1,5 +1,4 @@
-import { useState } from "react";
-import useStyles from "../../styles/useStyles";
+import useStyles from "./useStyles";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
@@ -11,15 +10,14 @@ interface Props {
 }
 
 const ChatSummary = ({ chat }: Props) => {
-	const [read, setRead] = useState<boolean>(false);
 	const classes = useStyles();
-	const { selectChatId, saveOtherUser } = useChat();
+	const { selectActiveChat, readChatIds } = useChat();
 
 	const handleClick = () => {
-		setRead(true);
-		selectChatId(chat.chatId);
-		saveOtherUser(chat.user);
+		selectActiveChat(chat);
 	};
+
+	const read = readChatIds.has(chat.chatId);
 
 	return (
 		<Box className={classes.chatContainer} onClick={handleClick}>

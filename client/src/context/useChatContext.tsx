@@ -8,37 +8,37 @@ import {
 } from "react";
 import { Message } from "../interface/Message";
 import { getChatMessages } from "../helpers/APICalls/getChatMessages";
-import { User } from "../interface/User";
+import { UserChat } from "../interface/UserChats";
+import mockChatMessages from "../mocks/mockChatMessages";
 
 interface IChatContext {
-	chatId: number | null;
-	selectChatId: (id: number) => void;
-	otherUser: User | null;
-	saveOtherUser: (user: User) => void;
+	activeChat: UserChat | null;
+	selectActiveChat: (chat: UserChat) => void;
 	activeChatMessages: Message[] | null;
+	readChatIds: Set<number>;
 }
 
+const initialReadChatIds: Set<number> = new Set();
+
 export const ChatContext = createContext<IChatContext>({
-	chatId: null,
-	selectChatId: () => null,
-	otherUser: null,
-	saveOtherUser: () => null,
+	activeChat: null,
+	selectActiveChat: () => null,
 	activeChatMessages: null,
+	readChatIds: initialReadChatIds,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
-	const [chatId, setChatId] = useState<number | null>(null);
-	const [otherUser, setOtherUser] = useState<User | null>(null);
+	const [activeChat, setActiveChat] = useState<UserChat | null>(null);
 	const [activeChatMessages, setActiveChatMessages] = useState<
 		Message[] | null
 	>(null);
+	const [readChatIds, setReadChatIds] = useState<Set<number>>(
+		initialReadChatIds
+	);
 
-	const selectChatId = useCallback((id: number) => {
-		setChatId(id);
-	}, []);
-
-	const saveOtherUser = useCallback((user: User) => {
-		setOtherUser(user);
+	const selectActiveChat = useCallback((chat: UserChat) => {
+		setActiveChat(chat);
+		setReadChatIds((state) => state.add(chat.chatId));
 	}, []);
 
 	const saveChatMessages = useCallback((messages: Message[]) => {
@@ -50,20 +50,34 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	}, []);
 
 	useEffect(() => {
-		if (chatId) {
-			getChatMessages({ chatId, saveChatMessages, removeChatMessages });
+		if (activeChat) {
+			getChatMessages({
+				chatId: activeChat.chatId,
+			})
+				.then((data) => {
+					//TODO: upon connection, get this from backend and delete mockUser variable
+					saveChatMessages(mockChatMessages);
+				})
+				.catch((error) => {
+					console.error({ error });
+
+					// remove this line, only used for testing dashboard in development
+					saveChatMessages(mockChatMessages);
+					// add in following line. only commented out for testing dashboard
+					// removeChatMessages();
+				});
 		}
 		return () => removeChatMessages();
-	}, [chatId, saveChatMessages, removeChatMessages]);
+		// once connected with socket io. Look to only get chat the first time and the just get new messages and not re-fetch entire conversation every time.
+	}, [activeChat, saveChatMessages, removeChatMessages]);
 
 	return (
 		<ChatContext.Provider
 			value={{
-				chatId,
-				selectChatId,
-				otherUser,
-				saveOtherUser,
 				activeChatMessages,
+				readChatIds,
+				activeChat,
+				selectActiveChat,
 			}}
 		>
 			{children}

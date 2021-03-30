@@ -1,5 +1,5 @@
 import { ChangeEvent, useState, useEffect, SyntheticEvent } from "react";
-import useStyles from "../../styles/useStyles";
+import useStyles from "./useStyles";
 import SearchIcon from "@material-ui/icons/Search";
 import InputBase from "@material-ui/core/InputBase";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -62,9 +62,6 @@ const Search = ({ search, handleChange }: Props) => {
 				inputValue={search}
 				renderInput={(params) => (
 					<div className={classes.search}>
-						<div className={classes.searchIcon}>
-							<SearchIcon />
-						</div>
 						<InputBase
 							{...params.inputProps}
 							placeholder="Search"
@@ -76,6 +73,11 @@ const Search = ({ search, handleChange }: Props) => {
 								"aria-label": "search",
 								ref: params.InputProps.ref,
 							}}
+							startAdornment={
+								<div className={classes.searchIcon}>
+									<SearchIcon />
+								</div>
+							}
 						/>
 					</div>
 				)}

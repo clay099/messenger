@@ -1,33 +1,54 @@
 import Typography from "@material-ui/core/Typography";
-import useStyles from "../../../styles/useStyles";
-import Box from "@material-ui/core/Box";
+import useStyles from "./useStyles";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
 import { OnlineBadge } from "../../../components/StyledBadge/StyledBadge";
 import { useChat } from "../../../context/useChatContext";
+import Grid from "@material-ui/core/Grid";
 
-const Header = () => {
+interface Props {
+	handleDrawerToggle: () => void;
+}
+
+const Header = ({ handleDrawerToggle }: Props) => {
 	const classes = useStyles();
-	const { otherUser } = useChat();
+	const { activeChat } = useChat();
 
 	// once set up with socket.IO update this to be dynamic
 	const onlineStatus = true;
 
 	return (
-		<Box className={classes.activeChatHeader}>
-			<Typography
-				className={classes.activeChatUser}
-				component="h1"
-				variant="h5"
-			>
-				{otherUser?.username}
-			</Typography>
+		<Grid container spacing={1} className={classes.activeChatHeader}>
+			<Grid item>
+				<IconButton
+					color="inherit"
+					aria-label="open drawer"
+					edge="start"
+					onClick={handleDrawerToggle}
+					className={classes.menuButton}
+				>
+					<MenuIcon />
+				</IconButton>
+			</Grid>
+			<Grid item>
+				<Typography
+					className={classes.activeChatUser}
+					component="h1"
+					variant="h5"
+				>
+					{activeChat?.user.username}
+				</Typography>
+			</Grid>
 			{onlineStatus && (
-				<OnlineBadge>
-					<Typography className={classes.activeChatOnline}>
-						Online
-					</Typography>
-				</OnlineBadge>
+				<Grid item>
+					<OnlineBadge>
+						<Typography className={classes.activeChatOnline}>
+							Online
+						</Typography>
+					</OnlineBadge>
+				</Grid>
 			)}
-		</Box>
+		</Grid>
 	);
 };
 

@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import useStyles from "../../styles/useStyles";
+import useStyles from "./useStyles";
 import { User } from "../../interface/User";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import Search from "../Search/Search";
@@ -35,7 +35,7 @@ const ChatSideBanner = ({ loggedInUser }: Props) => {
 		});
 
 	return (
-		<Grid item xs={12} sm={4} md={3} className={classes.chatSideBanner}>
+		<Grid className={classes.chatSideBanner}>
 			<Box className={classes.userPanel}>
 				<AvatarDisplay loggedIn />
 				<Typography className={classes.userText} variant="h5">

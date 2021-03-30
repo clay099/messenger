@@ -1,6 +1,9 @@
+import { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import useStyles from "../../styles/useStyles";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import useStyles from "./useStyles";
 import { useAuth } from "../../context/useAuthContext";
 // import { useHistory } from "react-router-dom";
 import ChatSideBanner from "../../components/ChatSideBanner/ChatSideBanner";
@@ -11,6 +14,12 @@ import { ChatProvider } from "../../context/useChatContext";
 import SendMessageForm from "./SendMessageForm/SendMessageForm";
 
 export default function Dashboard() {
+	const [drawerOpen, setDrawerOpen] = useState(false);
+
+	const handleDrawerToggle = () => {
+		setDrawerOpen(!drawerOpen);
+	};
+
 	const classes = useStyles();
 
 	const { loggedInUser } = useAuth();
@@ -32,9 +41,32 @@ export default function Dashboard() {
 				className={`${classes.root} ${classes.dashboard}`}
 			>
 				<CssBaseline />
-				<ChatSideBanner loggedInUser={loggedInUser as User} />
-				<Grid item xs={12} sm={8} md={9} className={classes.activeChat}>
-					<Header />
+				<Grid item className={classes.drawerWrapper}>
+					<Hidden mdUp implementation="css">
+						<Drawer
+							variant="temporary"
+							anchor="left"
+							open={drawerOpen}
+							onClose={handleDrawerToggle}
+							ModalProps={{
+								keepMounted: true, // Better open performance on mobile.
+							}}
+						>
+							<ChatSideBanner
+								loggedInUser={loggedInUser as User}
+							/>
+						</Drawer>
+					</Hidden>
+					<Hidden xsDown implementation="css">
+						<Drawer variant="permanent" open>
+							<ChatSideBanner
+								loggedInUser={loggedInUser as User}
+							/>
+						</Drawer>
+					</Hidden>
+				</Grid>
+				<Grid item className={classes.activeChat}>
+					<Header handleDrawerToggle={handleDrawerToggle} />
 					<ActiveChat />
 					<SendMessageForm />
 				</Grid>

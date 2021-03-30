@@ -1,19 +1,29 @@
+import { useEffect, useRef } from "react";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import { useChat } from "../../context/useChatContext";
 import { useAuth } from "../../context/useAuthContext";
 import { dateToTime } from "../../helpers/dateToTime";
-import useStyles from "../../styles/useStyles";
+import useStyles from "./useStyles";
 
 const ActiveChat = () => {
 	const classes = useStyles();
 
 	const { loggedInUser } = useAuth();
 	const { activeChatMessages } = useChat();
+	const chatContainerRef = useRef<HTMLDivElement>(null);
+
+	// when you change chats always start from bottom
+	useEffect(() => {
+		if (chatContainerRef?.current && activeChatMessages) {
+			chatContainerRef.current.scrollTop =
+				chatContainerRef.current.scrollHeight;
+		}
+	}, [activeChatMessages]);
 
 	return (
-		<Box className={classes.activeChatMessages}>
+		<div className={classes.activeChatMessages} ref={chatContainerRef}>
 			{!activeChatMessages ? (
 				<Typography>Loading...</Typography>
 			) : (
@@ -31,9 +41,8 @@ const ActiveChat = () => {
 							}`}
 						>
 							<Typography className={classes.messageMetaData}>
-								{`${message.user.username} ${dateToTime(
-									message.createdAt
-								)}`}
+								{message.user.username}{" "}
+								<i>{dateToTime(message.createdAt)}</i>
 							</Typography>
 							<Typography
 								className={`${classes.messageText} ${
@@ -48,7 +57,7 @@ const ActiveChat = () => {
 					</Box>
 				))
 			)}
-		</Box>
+		</div>
 	);
 };
 
