@@ -7,31 +7,36 @@ import {
 	useCallback,
 } from "react";
 import { useHistory } from "react-router-dom";
+import { User } from "../interface/User";
+import { mockLoggedInUser } from "../mocks/mockUser";
 
 interface IAuthContext {
-	loggedIn: boolean | null;
-	updateLoginContext: () => void;
+	loggedInUser: User | null | undefined;
+	updateLoginContext: (user: User) => void;
 	logout: () => void;
 }
 
-const AuthContext = createContext<IAuthContext>({
-	loggedIn: null,
+export const AuthContext = createContext<IAuthContext>({
+	loggedInUser: undefined,
 	updateLoginContext: () => null,
 	logout: () => null,
 });
 
 export const AuthProvider: FunctionComponent = ({ children }) => {
-	// if null we are still running the original login useEffect
-	const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+	// default undefined before loading, once loaded provide user or null if logged out
+	const [loggedInUser, setLoggedInUser] = useState<User | null | undefined>();
 	const history = useHistory();
 
-	const updateLoginContext = useCallback(() => {
-		setLoggedIn(true);
-		history.push("/dashboard");
-	}, [history]);
+	const updateLoginContext = useCallback(
+		(user: User) => {
+			setLoggedInUser(user);
+			history.push("/dashboard");
+		},
+		[history]
+	);
 
 	const logout = () => {
-		setLoggedIn(false);
+		setLoggedInUser(null);
 		history.push("/login");
 	};
 
@@ -46,12 +51,17 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 				.then((data) => {
 					//TODO: check that if we get here we have successfully logged in
 					console.log({ data });
-					updateLoginContext();
+					//TODO: upon connection, get this from backend and delete mockLoggedInUser variable
+					updateLoginContext(mockLoggedInUser);
 				})
 				.catch((error) => {
 					// think we should be able to ignore error, if we can't login we don't care about error
 					console.log({ error });
-					setLoggedIn(false);
+
+					// remove this line, only used for testing dashboard
+					setLoggedInUser(mockLoggedInUser);
+					// add in following line. only commented out for testing dashboard
+					// setLoggedInUser(null);
 				});
 		};
 
@@ -59,7 +69,9 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 	}, [updateLoginContext]);
 
 	return (
-		<AuthContext.Provider value={{ loggedIn, updateLoginContext, logout }}>
+		<AuthContext.Provider
+			value={{ loggedInUser, updateLoginContext, logout }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

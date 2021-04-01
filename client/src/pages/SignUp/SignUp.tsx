@@ -8,12 +8,13 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import { FormikHelpers } from "formik";
 import Typography from "@material-ui/core/Typography";
-import useStyles from "../../styles/useStyles";
-import register from "../../helpers/register";
-import SideBanner from "../../components/SideBanner/SideBanner";
+import useStyles from "./useStyles";
+import register from "../../helpers/APICalls/register";
+import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import SignUpForm from "./SignUpForm/SignUpForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
-import { useAuth } from "../../context/useContext";
+import { useAuth } from "../../context/useAuthContext";
+import { mockLoggedInUser } from "../../mocks/mockUser";
 
 export interface handleSubmit {}
 
@@ -50,7 +51,8 @@ export default function Register() {
 			(res) => {
 				// clean this up once connected to backend
 				console.log({ res });
-				updateLoginContext();
+				// upon connection, get this from backend
+				updateLoginContext(mockLoggedInUser);
 			},
 			(error) => {
 				setSubmitting(false);
@@ -62,7 +64,7 @@ export default function Register() {
 	return (
 		<Grid container component="main" className={classes.root}>
 			<CssBaseline />
-			<SideBanner />
+			<AuthSideBanner />
 			<Grid
 				item
 				xs={12}

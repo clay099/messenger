@@ -2,10 +2,10 @@ import Box from "@material-ui/core/Box";
 import Hidden from "@material-ui/core/Hidden";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import useStyles from "../../styles/useStyles";
+import useStyles from "./useStyles";
 import chatBubble from "../../Images/bubble.svg";
 
-const SideBanner = () => {
+const AuthSideBanner = () => {
 	const classes = useStyles();
 
 	return (
@@ -28,4 +28,4 @@ const SideBanner = () => {
 	);
 };
 
-export default SideBanner;
+export default AuthSideBanner;

@@ -1,25 +1,81 @@
-import React from "react";
-import Button from "@material-ui/core/Button";
+import { useState } from "react";
+import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import { useAuth } from "../../context/useContext";
-import { useHistory } from "react-router-dom";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
+import useStyles from "./useStyles";
+import { useAuth } from "../../context/useAuthContext";
+// import { useHistory } from "react-router-dom";
+import ChatSideBanner from "../../components/ChatSideBanner/ChatSideBanner";
+import { User } from "../../interface/User";
+import Header from "./Header/Header";
+import ActiveChat from "../../components/ActiveChat/ActiveChat";
+import { ChatProvider } from "../../context/useChatContext";
+import SendMessageForm from "./SendMessageForm/SendMessageForm";
 
 export default function Dashboard() {
-	const { loggedIn } = useAuth();
-	const history = useHistory();
+	const [drawerOpen, setDrawerOpen] = useState(false);
 
-	if (loggedIn === null) return <p>Loading...</p>;
-	if (!loggedIn) {
-		history.push("/login");
-	}
+	const handleDrawerToggle = () => {
+		setDrawerOpen(!drawerOpen);
+	};
+
+	const classes = useStyles();
+
+	const theme = useTheme();
+	const drawerSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+
+	const { loggedInUser } = useAuth();
+
+	// const history = useHistory();
+
+	if (loggedInUser === undefined) return <p>Loading...</p>;
+	// once connected uncomment below.
+	// if (!loggedInUser) {
+	// 	history.push("/login");
+	// }
+
+	// anything below this loggedInUser will be a User
 	return (
-		<p>
-			{/* For testing purposes right now, ignore styling */}
-			<p>Dashboard</p>
-			<p>User: {JSON.stringify(localStorage.getItem("user"))}</p>
-			<button onClick={() => {}}>Logout</button>
-		</p>
+		<ChatProvider>
+			<CssBaseline />
+			<Grid
+				container
+				component="main"
+				className={`${classes.root} ${classes.dashboard}`}
+			>
+				<Grid item className={classes.drawerWrapper}>
+					{drawerSmUp ? (
+						<Drawer variant="permanent" open>
+							<ChatSideBanner
+								loggedInUser={loggedInUser as User}
+							/>
+						</Drawer>
+					) : (
+						<Drawer
+							variant="temporary"
+							anchor="left"
+							open={drawerOpen}
+							onClose={handleDrawerToggle}
+							ModalProps={{
+								keepMounted: true, // Better open performance on mobile.
+							}}
+						>
+							<ChatSideBanner
+								loggedInUser={loggedInUser as User}
+								handleDrawerToggle={handleDrawerToggle}
+							/>
+						</Drawer>
+					)}
+				</Grid>
+				<Grid item className={classes.activeChat}>
+					<Header handleDrawerToggle={handleDrawerToggle} />
+					<ActiveChat />
+					<SendMessageForm />
+				</Grid>
+			</Grid>
+		</ChatProvider>
 	);
 }
