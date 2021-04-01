@@ -7,7 +7,7 @@ import { User } from "../../interface/User";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import Search from "../Search/Search";
 import ChatSummary from "../ChatSummary/ChatSummary";
-import useGetChats from "../../hooks/useGetChats";
+import { useChat } from "../../context/useChatContext";
 
 interface Props {
 	loggedInUser: User;
@@ -16,17 +16,18 @@ interface Props {
 
 const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 	const [search, setSearch] = useState<string>("");
-	const chats = useGetChats();
 	const classes = useStyles();
 
 	const handleChange = (event: ChangeEvent<{}>, newInputValue: string) => {
 		setSearch(newInputValue);
 	};
 
+	const { userChats } = useChat();
+
 	// filter the chat for searched users
 	const displayChat =
-		chats &&
-		chats.filter((chat) => {
+		userChats &&
+		userChats.filter((chat) => {
 			if (
 				chat.userEmail.toLowerCase().includes(search) ||
 				chat.user.username.toLowerCase().includes(search)

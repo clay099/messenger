@@ -6,6 +6,8 @@ import { useChat } from "../../context/useChatContext";
 import { useAuth } from "../../context/useAuthContext";
 import { dateToTime } from "../../helpers/dateToTime";
 import useStyles from "./useStyles";
+import { useDebouncedCallback } from "use-debounce";
+import { Message } from "../../interface/Message";
 
 const ActiveChat = () => {
 	const classes = useStyles();
@@ -27,17 +29,24 @@ const ActiveChat = () => {
 		}
 	}, [activeChatMessages, savedScrollPosition]);
 
-	// when component scrolls saves that scroll position
-	function handleScroll(e: UIEvent<HTMLDivElement>) {
-		const top = e.currentTarget.scrollTop;
-		if (activeChatMessages && top) {
+	const debounceScroll = useDebouncedCallback(
+		(top: number, chatId: number) => {
 			setSavedScrollPosition((state) => {
 				const updatedState = new Map(state);
-				updatedState.set(activeChatMessages[0].chatId, top);
+				updatedState.set(chatId, top);
 				return updatedState;
 			});
+		},
+		500
+	);
+
+	// when component scrolls saves that scroll position
+	const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+		const top = e.currentTarget.scrollTop;
+		if (activeChatMessages && top) {
+			debounceScroll(top, activeChatMessages[0].chatId);
 		}
-	}
+	};
 
 	return (
 		<div

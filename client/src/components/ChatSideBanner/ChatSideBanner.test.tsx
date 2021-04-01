@@ -2,10 +2,7 @@ import { render, fireEvent } from "@testing-library/react";
 import ChatSideBanner from "./ChatSideBanner";
 import { mockLoggedInUser } from "../../mocks/mockUser";
 import mockChats from "../../mocks/mockChats";
-
-jest.mock("../../hooks/useGetChats", () => {
-	return () => mockChats;
-});
+import MockChatProvider from "../../mocks/mockUseChatProvider";
 
 describe("ChatSideBanner tests", () => {
 	test("smoke test", () => {
@@ -21,7 +18,9 @@ describe("ChatSideBanner tests", () => {
 
 	test("should display sidebar data", () => {
 		const { getByText, queryByText, getByPlaceholderText } = render(
-			<ChatSideBanner loggedInUser={mockLoggedInUser} />
+			<MockChatProvider>
+				<ChatSideBanner loggedInUser={mockLoggedInUser} />
+			</MockChatProvider>
 		);
 
 		expect(getByText(mockLoggedInUser.username)).toBeInTheDocument();

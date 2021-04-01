@@ -2,11 +2,6 @@ import { render } from "@testing-library/react";
 import Dashboard from "./Dashboard";
 import MockChatProvider from "../../mocks/mockUseChatProvider";
 import MockAuthProvider from "../../mocks/mockUseAuthProvider";
-import mockChats from "../../mocks/mockChats";
-
-jest.mock("../../hooks/useGetChats", () => {
-	return () => mockChats;
-});
 
 describe("Dashboard tests", () => {
 	test("smoke test", () => {

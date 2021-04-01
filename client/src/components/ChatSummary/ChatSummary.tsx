@@ -15,7 +15,6 @@ const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 	const { selectActiveChat } = useChat();
 
 	const handleClick = () => {
-		chat.readChat = true;
 		selectActiveChat(chat);
 		if (handleDrawerToggle) {
 			handleDrawerToggle();
