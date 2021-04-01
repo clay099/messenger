@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 	activeChat: {
 		display: "flex",
 		flexDirection: "column",
-		minHeight: "100vh",
+		height: "100vh",
 		padding: "0 1rem",
 		width: "100%",
 		[theme.breakpoints.up("sm")]: {

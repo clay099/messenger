@@ -11,9 +11,10 @@ import useGetChats from "../../hooks/useGetChats";
 
 interface Props {
 	loggedInUser: User;
+	handleDrawerToggle?: () => void;
 }
 
-const ChatSideBanner = ({ loggedInUser }: Props) => {
+const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 	const [search, setSearch] = useState<string>("");
 	const chats = useGetChats();
 	const classes = useStyles();
@@ -52,7 +53,11 @@ const ChatSideBanner = ({ loggedInUser }: Props) => {
 						<Typography>Loading...</Typography>
 					) : (
 						displayChat.map((chat) => (
-							<ChatSummary key={chat.chatId} chat={chat} />
+							<ChatSummary
+								key={chat.chatId}
+								chat={chat}
+								handleDrawerToggle={handleDrawerToggle}
+							/>
 						))
 					)}
 				</Box>

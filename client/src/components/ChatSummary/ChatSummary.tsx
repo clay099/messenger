@@ -7,17 +7,22 @@ import { useChat } from "../../context/useChatContext";
 
 interface Props {
 	chat: UserChat;
+	handleDrawerToggle?: () => void;
 }
 
-const ChatSummary = ({ chat }: Props) => {
+const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 	const classes = useStyles();
-	const { selectActiveChat, readChatIds } = useChat();
+	const { selectActiveChat } = useChat();
 
 	const handleClick = () => {
+		chat.readChat = true;
 		selectActiveChat(chat);
+		if (handleDrawerToggle) {
+			handleDrawerToggle();
+		}
 	};
 
-	const read = readChatIds.has(chat.chatId);
+	const read = chat.readChat === true;
 
 	return (
 		<Box className={classes.chatContainer} onClick={handleClick}>

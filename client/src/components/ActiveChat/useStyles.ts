@@ -5,12 +5,9 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: "2rem",
 		display: "flex",
 		flexDirection: "column",
-		height: "65vh",
 		overflowY: "auto",
 		overflowX: "hidden",
-		[theme.breakpoints.up("sm")]: {
-			height: "70vh",
-		},
+		flexGrow: 1,
 	},
 	message: {
 		display: "flex",

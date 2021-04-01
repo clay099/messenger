@@ -27,9 +27,18 @@ const Search = ({ search, handleChange }: Props) => {
 	useEffect(() => {
 		let active = true;
 
-		// send request to backend API to get users limited to 20.
-		// clean this function up when connected to the backend
-		searchUsers({ active, search: debouncedSearch, saveOptions });
+		async function searchAndSaveUsers() {
+			// send request to backend API to get users limited to 20.
+			// clean this function up when connected to the backend
+			const users = await searchUsers({
+				search: debouncedSearch,
+			});
+
+			if (active) {
+				saveOptions(users);
+			}
+		}
+		searchAndSaveUsers();
 
 		return () => {
 			active = false;

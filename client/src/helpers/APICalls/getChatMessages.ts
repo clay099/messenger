@@ -5,5 +5,7 @@ export async function getChatMessages({ chatId }: Props) {
 	const fetchOptions = {
 		method: "GET",
 	};
-	await fetch(`/api/chat/${chatId}`, fetchOptions).then((res) => res.json());
+	return await fetch(`/api/chat/${chatId}`, fetchOptions).then((res) =>
+		res.json()
+	);
 }

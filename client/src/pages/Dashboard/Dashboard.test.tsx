@@ -58,8 +58,7 @@ describe("Dashboard tests", () => {
 				</MockChatProvider>
 			</MockAuthProvider>
 		);
-		// expect two as we render twice for mobile and desktop as referenced in material UI documents
-		expect(getAllByText("Chats")).toHaveLength(2);
+		expect(getAllByText("Chats")).toHaveLength(1);
 		expect(getByPlaceholderText("Type something...")).toBeInTheDocument();
 	});
 });

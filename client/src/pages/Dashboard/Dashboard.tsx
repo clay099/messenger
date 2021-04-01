@@ -3,6 +3,8 @@ import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { useTheme } from "@material-ui/core/styles";
 import useStyles from "./useStyles";
 import { useAuth } from "../../context/useAuthContext";
 // import { useHistory } from "react-router-dom";
@@ -22,6 +24,9 @@ export default function Dashboard() {
 
 	const classes = useStyles();
 
+	const theme = useTheme();
+	const drawerSmUp = useMediaQuery(theme.breakpoints.up("sm"));
+
 	const { loggedInUser } = useAuth();
 
 	// const history = useHistory();
@@ -35,14 +40,20 @@ export default function Dashboard() {
 	// anything below this loggedInUser will be a User
 	return (
 		<ChatProvider>
+			<CssBaseline />
 			<Grid
 				container
 				component="main"
 				className={`${classes.root} ${classes.dashboard}`}
 			>
-				<CssBaseline />
 				<Grid item className={classes.drawerWrapper}>
-					<Hidden mdUp implementation="css">
+					{drawerSmUp ? (
+						<Drawer variant="permanent" open>
+							<ChatSideBanner
+								loggedInUser={loggedInUser as User}
+							/>
+						</Drawer>
+					) : (
 						<Drawer
 							variant="temporary"
 							anchor="left"
@@ -54,16 +65,10 @@ export default function Dashboard() {
 						>
 							<ChatSideBanner
 								loggedInUser={loggedInUser as User}
+								handleDrawerToggle={handleDrawerToggle}
 							/>
 						</Drawer>
-					</Hidden>
-					<Hidden xsDown implementation="css">
-						<Drawer variant="permanent" open>
-							<ChatSideBanner
-								loggedInUser={loggedInUser as User}
-							/>
-						</Drawer>
-					</Hidden>
+					)}
 				</Grid>
 				<Grid item className={classes.activeChat}>
 					<Header handleDrawerToggle={handleDrawerToggle} />

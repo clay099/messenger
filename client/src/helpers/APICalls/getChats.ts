@@ -3,5 +3,5 @@ export async function getChats() {
 		method: "GET",
 	};
 
-	await fetch("/api/chat", fetchOptions).then((res) => res.json());
+	return await fetch("/api/chat", fetchOptions).then((res) => res.json());
 }

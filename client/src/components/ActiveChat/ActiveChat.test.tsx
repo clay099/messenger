@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import ActiveChat from "./ActiveChat";
 import MockChatProvider from "../../mocks/mockUseChatProvider";
-import mockChatMessages from "../../mocks/mockChatMessages";
+import { mockChatMessages } from "../../mocks/mockChatMessages";
 
 describe("ActiveChat tests", () => {
 	test("smoke test", () => {

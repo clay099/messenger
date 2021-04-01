@@ -24,6 +24,7 @@ export default function useGetChats() {
 				// TODO: handle Edge case for when user has not chats to display. Should be able to check for length and return []
 				saveUserChats(mockChats);
 				// default to the first chat being displayed
+				mockChats[0].readChat = true;
 				selectActiveChat(mockChats[0]);
 			})
 			.catch((error) => {
@@ -32,6 +33,7 @@ export default function useGetChats() {
 
 				// remove this line, only used for testing dashboard
 				saveUserChats(mockChats);
+				mockChats[0].readChat = true;
 				selectActiveChat(mockChats[0]);
 				// add in following lines. only commented out for testing dashboard
 				// removeUserChats(null);

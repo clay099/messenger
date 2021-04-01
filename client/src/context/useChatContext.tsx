@@ -9,22 +9,22 @@ import {
 import { Message } from "../interface/Message";
 import { getChatMessages } from "../helpers/APICalls/getChatMessages";
 import { UserChat } from "../interface/UserChats";
-import mockChatMessages from "../mocks/mockChatMessages";
+import {
+	mockChatMessages,
+	mockChatMessages2,
+	mockChatMessages3,
+} from "../mocks/mockChatMessages";
 
 interface IChatContext {
 	activeChat: UserChat | null;
 	selectActiveChat: (chat: UserChat) => void;
 	activeChatMessages: Message[] | null;
-	readChatIds: Set<number>;
 }
-
-const initialReadChatIds: Set<number> = new Set();
 
 export const ChatContext = createContext<IChatContext>({
 	activeChat: null,
 	selectActiveChat: () => null,
 	activeChatMessages: null,
-	readChatIds: initialReadChatIds,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
@@ -32,13 +32,9 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	const [activeChatMessages, setActiveChatMessages] = useState<
 		Message[] | null
 	>(null);
-	const [readChatIds, setReadChatIds] = useState<Set<number>>(
-		initialReadChatIds
-	);
 
 	const selectActiveChat = useCallback((chat: UserChat) => {
 		setActiveChat(chat);
-		setReadChatIds((state) => state.add(chat.chatId));
 	}, []);
 
 	const saveChatMessages = useCallback((messages: Message[]) => {
@@ -61,8 +57,15 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				.catch((error) => {
 					console.error({ error });
 
-					// remove this line, only used for testing dashboard in development
-					saveChatMessages(mockChatMessages);
+					// remove below line, only used for testing dashboard in development
+					let displayMockMessage =
+						activeChat.chatId === mockChatMessages[0].chatId
+							? mockChatMessages
+							: activeChat.chatId === mockChatMessages2[0].chatId
+							? mockChatMessages2
+							: mockChatMessages3;
+					saveChatMessages(displayMockMessage);
+
 					// add in following line. only commented out for testing dashboard
 					// removeChatMessages();
 				});
@@ -75,7 +78,6 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		<ChatContext.Provider
 			value={{
 				activeChatMessages,
-				readChatIds,
 				activeChat,
 				selectActiveChat,
 			}}
