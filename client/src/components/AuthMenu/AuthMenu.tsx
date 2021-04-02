@@ -40,9 +40,10 @@ const AuthMenu = () => {
 				open={open}
 				onClose={handleClose}
 				anchorOrigin={{
-					vertical: "center",
+					vertical: "top",
 					horizontal: "right",
 				}}
+				getContentAnchorEl={null}
 			>
 				<MenuItem onClick={handleLogout}>Logout</MenuItem>
 			</Menu>

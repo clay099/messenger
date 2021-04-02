@@ -38,9 +38,9 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 	const logout = async () => {
 		// needed to remove token cookie
 		await fetch("/logout");
-		setLoggedInUser(null);
 		localStorage.removeItem("token");
 		history.push("/login");
+		setLoggedInUser(null);
 	};
 
 	// use our cookies to check if we can login straight away
