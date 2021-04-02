@@ -34,21 +34,25 @@ router.post("/login", async function (req, res, next) {
 /** GET / {} => {success: {message: <string>, user: {username: <string>, email: <string>}}}
  * checks token to see if user can be logged in
  */
-router.get("/login", authenticateJWT, async function (req, res, next) {
-	try {
-		// if user is authenticated with token from HTTP only cookies we can provide them their details
-		const user = await db.User.getDetails(req.user.email);
-		return res.json({
-			success: {
-				message: "logged in",
-				user: { username: user.username, email: user.email },
-			},
-		});
-	} catch (error) {
-		console.error({ error });
-		return next(createError(400, error.message));
+router.get(
+	"/loginwithcookies",
+	authenticateJWT,
+	async function (req, res, next) {
+		try {
+			// if user is authenticated with token from HTTP only cookies we can provide them their details
+			const user = await db.User.getDetails(req.user.email);
+			return res.json({
+				success: {
+					message: "logged in",
+					user: { username: user.username, email: user.email },
+				},
+			});
+		} catch (error) {
+			console.error({ error });
+			return next(createError(400, error.message));
+		}
 	}
-});
+);
 
 /** POST / {email:<string>, password: <string>, username: <string>} => {success: {message: <string>, user: {username: <string>, email: <string>}}} */
 router.post("/register", async function (req, res, next) {
