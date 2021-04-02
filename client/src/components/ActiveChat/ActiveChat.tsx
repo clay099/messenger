@@ -7,7 +7,6 @@ import { useAuth } from "../../context/useAuthContext";
 import { dateToTime } from "../../helpers/dateToTime";
 import useStyles from "./useStyles";
 import { useDebouncedCallback } from "use-debounce";
-import { Message } from "../../interface/Message";
 
 const ActiveChat = () => {
 	const classes = useStyles();

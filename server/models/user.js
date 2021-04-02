@@ -124,7 +124,7 @@ module.exports = (sequelize, DataTypes) => {
 			const user = await this.findOne({ where: { email } });
 			if (!user) throw new Error("Invalid email/password");
 			let token = await user.authenticate(password);
-			return token;
+			return { token, user };
 		} catch (error) {
 			throw error;
 		}

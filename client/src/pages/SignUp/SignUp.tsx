@@ -1,4 +1,4 @@
-import React from "react";
+import { SyntheticEvent, useState } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
@@ -14,13 +14,13 @@ import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import SignUpForm from "./SignUpForm/SignUpForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useAuthContext";
-import { mockLoggedInUser } from "../../mocks/mockUser";
 
 export interface handleSubmit {}
 
 export default function Register() {
 	const classes = useStyles();
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
+	const [signUpError, setSignUpError] = useState<string | null>(null);
 	const { updateLoginContext } = useAuth();
 
 	const handleClose = () => {
@@ -28,7 +28,7 @@ export default function Register() {
 	};
 
 	const snackbarHandleClose = (
-		event: React.SyntheticEvent,
+		event: SyntheticEvent,
 		reason: SnackbarCloseReason
 	) => {
 		if (reason === "clickaway") return;
@@ -42,23 +42,28 @@ export default function Register() {
 			password,
 		}: { email: string; password: string; username: string },
 		{
-			setStatus,
 			setSubmitting,
 		}: FormikHelpers<{ email: string; password: string; username: string }>
 	) => {
-		setStatus();
-		register(username, email, password).then(
-			(res) => {
-				// clean this up once connected to backend
-				console.log({ res });
-				// upon connection, get this from backend
-				updateLoginContext(mockLoggedInUser);
-			},
-			(error) => {
+		register(username, email, password).then((data) => {
+			if (data.error) {
+				console.error({ error: data.error.message });
 				setSubmitting(false);
-				setStatus(error);
+				setSignUpError(data.error.message);
+				setOpen(true);
+			} else if (data.success) {
+				updateLoginContext(data.success.user);
+			} else {
+				// should not get here from backend but this catch is for an unknown issue
+				console.error({ data });
+
+				setSubmitting(false);
+				setSignUpError(
+					"An unexpected error occurred. Please try again"
+				);
+				setOpen(true);
 			}
-		);
+		});
 	};
 
 	return (
@@ -104,9 +109,9 @@ export default function Register() {
 					open={open}
 					autoHideDuration={6000}
 					onClose={snackbarHandleClose}
-					message="Email already exists"
+					message={signUpError}
 					action={
-						<React.Fragment>
+						<>
 							<IconButton
 								size="small"
 								aria-label="close"
@@ -115,7 +120,7 @@ export default function Register() {
 							>
 								<CloseIcon fontSize="small" />
 							</IconButton>
-						</React.Fragment>
+						</>
 					}
 				/>
 			</Grid>

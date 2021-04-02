@@ -9,7 +9,6 @@ import {
 import { useHistory } from "react-router-dom";
 import { AuthApiData } from "../interface/AuthApiData";
 import { User } from "../interface/User";
-import { mockLoggedInUser } from "../mocks/mockUser";
 
 interface IAuthContext {
 	loggedInUser: User | null | undefined;
@@ -36,8 +35,11 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 		[history]
 	);
 
-	const logout = () => {
+	const logout = async () => {
+		// needed to remove token cookie
+		await fetch("/logout");
 		setLoggedInUser(null);
+		localStorage.removeItem("token");
 		history.push("/login");
 	};
 
@@ -50,12 +52,11 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 			await fetch("/login", fetchOptions)
 				.then((res) => res.json())
 				.then((data: AuthApiData) => {
-					if (data.error) {
-						console.error({ error: data.error.message });
-						setLoggedInUser(null);
+					if (data.success) {
+						updateLoginContext(data.success.user);
 					} else {
-						//TODO: upon connection, get this from backend and delete mockLoggedInUser variable
-						updateLoginContext(mockLoggedInUser);
+						// don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
+						setLoggedInUser(null);
 					}
 				});
 		};

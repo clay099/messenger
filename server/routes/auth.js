@@ -3,9 +3,11 @@ const createError = require("http-errors");
 const router = express.Router();
 const db = require("../models/index");
 const addToken = require("../helpers/addToken");
+const removeToken = require("../helpers/removeToken");
 const createToken = require("../helpers/createToken");
+const { authenticateJWT } = require("../middleware/auth");
 
-/** POST / {email:<string>, password: <string>} => {token: <string>} */
+/** POST / {email:<string>, password: <string>} => {success: {message: <string>, user: {username: <string>, email: <string>}}} */
 router.post("/login", async function (req, res, next) {
 	try {
 		let { email, password } = req.body;
@@ -13,18 +15,42 @@ router.post("/login", async function (req, res, next) {
 			throw new Error(`Please include all fields: email, password`);
 		}
 
-		let token = await db.User.login({ email, password });
+		let { token, user } = await db.User.login({ email, password });
 		// adds token as cookie
 		addToken(res, token);
 
-		return res.json({ message: "logged in" });
+		return res.json({
+			success: {
+				message: "logged in",
+				user: { username: user.username, email: user.email },
+			},
+		});
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));
 	}
 });
 
-/** POST / {email:<string>, password: <string>, username: <string>} => {user: {email: <string>, password:<hashedString> username:<string> }} */
+/** GET / {} => {success: {message: <string>, user: {username: <string>, email: <string>}}}
+ * checks token to see if user can be logged in
+ */
+router.get("/login", authenticateJWT, async function (req, res, next) {
+	try {
+		// if user is authenticated with token from HTTP only cookies we can provide them their details
+		const user = await db.User.getDetails(req.user.email);
+		return res.json({
+			success: {
+				message: "logged in",
+				user: { username: user.username, email: user.email },
+			},
+		});
+	} catch (error) {
+		console.error({ error });
+		return next(createError(400, error.message));
+	}
+});
+
+/** POST / {email:<string>, password: <string>, username: <string>} => {success: {message: <string>, user: {username: <string>, email: <string>}}} */
 router.post("/register", async function (req, res, next) {
 	try {
 		let { email, password, username } = req.body;
@@ -48,7 +74,12 @@ router.post("/register", async function (req, res, next) {
 		// adds token as cookie
 		addToken(res, token);
 
-		return res.status(201).json({ message: `New user created` });
+		return res.status(201).json({
+			success: {
+				message: "New user created",
+				user: { username: user.username, email: user.email },
+			},
+		});
 	} catch (error) {
 		console.error({ error });
 		let errorText;
@@ -64,6 +95,23 @@ router.post("/register", async function (req, res, next) {
 			errorText = error.message;
 		}
 		return next(createError(400, errorText));
+	}
+});
+
+/** POST /  => {message: "logged out"}
+ * used to remove HttpOnly cookies
+ */
+router.get("/logout", async function (req, res, next) {
+	try {
+		removeToken(res);
+		return res.json({
+			success: {
+				message: "User logged out",
+			},
+		});
+	} catch (error) {
+		console.error({ error });
+		return next(createError(400, error.message));
 	}
 });
 
