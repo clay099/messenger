@@ -40,8 +40,8 @@ const AuthMenu = () => {
 				open={open}
 				onClose={handleClose}
 				anchorOrigin={{
-					vertical: "top",
-					horizontal: "right",
+					vertical: "bottom",
+					horizontal: "left",
 				}}
 				getContentAnchorEl={null}
 			>

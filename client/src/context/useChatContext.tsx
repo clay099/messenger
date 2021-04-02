@@ -65,10 +65,6 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		setUserChats(userChats);
 	}, []);
 
-	// const removeUserChats = useCallback(() => {
-	// 	setUserChats(null);
-	// }, []);
-
 	// get active chat messages
 	useEffect(() => {
 		if (activeChat) {

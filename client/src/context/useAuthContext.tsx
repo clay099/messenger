@@ -9,6 +9,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { AuthApiData } from "../interface/AuthApiData";
 import { User } from "../interface/User";
+import loginWithCookies from "../helpers/APICalls/loginWithCookies";
 
 interface IAuthContext {
 	loggedInUser: User | null | undefined;
@@ -37,30 +38,26 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 
 	const logout = async () => {
 		// needed to remove token cookie
-		await fetch("/logout");
-		localStorage.removeItem("token");
-		history.push("/login");
-		setLoggedInUser(null);
+		await fetch("/logout")
+			.then(() => {
+				history.push("/login");
+				setLoggedInUser(null);
+			})
+			.catch((error) => console.error(error));
 	};
 
 	// use our cookies to check if we can login straight away
 	useEffect(() => {
 		const checkLoginWithCookies = async () => {
-			const fetchOptions = {
-				method: "GET",
-			};
-			await fetch("/login", fetchOptions)
-				.then((res) => res.json())
-				.then((data: AuthApiData) => {
-					if (data.success) {
-						updateLoginContext(data.success.user);
-					} else {
-						// don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
-						setLoggedInUser(null);
-					}
-				});
+			await loginWithCookies().then((data: AuthApiData) => {
+				if (data.success) {
+					updateLoginContext(data.success.user);
+				} else {
+					// don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
+					setLoggedInUser(null);
+				}
+			});
 		};
-
 		checkLoginWithCookies();
 	}, [updateLoginContext]);
 
