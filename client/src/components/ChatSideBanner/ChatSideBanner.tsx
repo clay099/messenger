@@ -8,6 +8,7 @@ import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import Search from "../Search/Search";
 import ChatSummary from "../ChatSummary/ChatSummary";
 import { useChat } from "../../context/useChatContext";
+import AuthMenu from "../AuthMenu/AuthMenu";
 
 interface Props {
 	loggedInUser: User;
@@ -43,6 +44,7 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 				<Typography className={classes.userText} variant="h5">
 					{loggedInUser.username}
 				</Typography>
+				<AuthMenu />
 			</Box>
 			<Box>
 				<Typography className={classes.chatTitle} variant="h5">

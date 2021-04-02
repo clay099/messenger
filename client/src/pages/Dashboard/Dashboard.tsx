@@ -2,12 +2,12 @@ import { useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { useTheme } from "@material-ui/core/styles";
 import useStyles from "./useStyles";
 import { useAuth } from "../../context/useAuthContext";
-// import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import ChatSideBanner from "../../components/ChatSideBanner/ChatSideBanner";
 import { User } from "../../interface/User";
 import Header from "./Header/Header";
@@ -29,15 +29,15 @@ export default function Dashboard() {
 
 	const { loggedInUser } = useAuth();
 
-	// const history = useHistory();
+	const history = useHistory();
 
-	if (loggedInUser === undefined) return <p>Loading...</p>;
-	// once connected uncomment below.
-	// if (!loggedInUser) {
-	// 	history.push("/login");
-	// }
+	if (loggedInUser === undefined) return <CircularProgress />;
+	if (!loggedInUser) {
+		history.push("/login");
+		// loading for a split seconds until history.push works
+		return <CircularProgress />;
+	}
 
-	// anything below this loggedInUser will be a User
 	return (
 		<ChatProvider>
 			<CssBaseline />
@@ -49,9 +49,7 @@ export default function Dashboard() {
 				<Grid item className={classes.drawerWrapper}>
 					{drawerSmUp ? (
 						<Drawer variant="permanent" open>
-							<ChatSideBanner
-								loggedInUser={loggedInUser as User}
-							/>
+							<ChatSideBanner loggedInUser={loggedInUser} />
 						</Drawer>
 					) : (
 						<Drawer

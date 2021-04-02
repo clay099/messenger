@@ -7,6 +7,7 @@ import {
 	useCallback,
 } from "react";
 import { useHistory } from "react-router-dom";
+import { AuthApiData } from "../interface/AuthApiData";
 import { User } from "../interface/User";
 import { mockLoggedInUser } from "../mocks/mockUser";
 
@@ -48,20 +49,14 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 			};
 			await fetch("/login", fetchOptions)
 				.then((res) => res.json())
-				.then((data) => {
-					//TODO: check that if we get here we have successfully logged in
-					console.log({ data });
-					//TODO: upon connection, get this from backend and delete mockLoggedInUser variable
-					updateLoginContext(mockLoggedInUser);
-				})
-				.catch((error) => {
-					// think we should be able to ignore error, if we can't login we don't care about error
-					console.log({ error });
-
-					// remove this line, only used for testing dashboard
-					setLoggedInUser(mockLoggedInUser);
-					// add in following line. only commented out for testing dashboard
-					// setLoggedInUser(null);
+				.then((data: AuthApiData) => {
+					if (data.error) {
+						console.error({ error: data.error.message });
+						setLoggedInUser(null);
+					} else {
+						//TODO: upon connection, get this from backend and delete mockLoggedInUser variable
+						updateLoginContext(mockLoggedInUser);
+					}
 				});
 		};
 
