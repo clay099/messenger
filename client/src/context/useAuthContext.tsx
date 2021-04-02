@@ -7,8 +7,9 @@ import {
 	useCallback,
 } from "react";
 import { useHistory } from "react-router-dom";
+import { AuthApiData } from "../interface/AuthApiData";
 import { User } from "../interface/User";
-import { mockLoggedInUser } from "../mocks/mockUser";
+import loginWithCookies from "../helpers/APICalls/loginWithCookies";
 
 interface IAuthContext {
 	loggedInUser: User | null | undefined;
@@ -35,36 +36,28 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 		[history]
 	);
 
-	const logout = () => {
-		setLoggedInUser(null);
-		history.push("/login");
+	const logout = async () => {
+		// needed to remove token cookie
+		await fetch("/logout")
+			.then(() => {
+				history.push("/login");
+				setLoggedInUser(null);
+			})
+			.catch((error) => console.error(error));
 	};
 
 	// use our cookies to check if we can login straight away
 	useEffect(() => {
 		const checkLoginWithCookies = async () => {
-			const fetchOptions = {
-				method: "GET",
-			};
-			await fetch("/login", fetchOptions)
-				.then((res) => res.json())
-				.then((data) => {
-					//TODO: check that if we get here we have successfully logged in
-					console.log({ data });
-					//TODO: upon connection, get this from backend and delete mockLoggedInUser variable
-					updateLoginContext(mockLoggedInUser);
-				})
-				.catch((error) => {
-					// think we should be able to ignore error, if we can't login we don't care about error
-					console.log({ error });
-
-					// remove this line, only used for testing dashboard
-					setLoggedInUser(mockLoggedInUser);
-					// add in following line. only commented out for testing dashboard
-					// setLoggedInUser(null);
-				});
+			await loginWithCookies().then((data: AuthApiData) => {
+				if (data.success) {
+					updateLoginContext(data.success.user);
+				} else {
+					// don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
+					setLoggedInUser(null);
+				}
+			});
 		};
-
 		checkLoginWithCookies();
 	}, [updateLoginContext]);
 

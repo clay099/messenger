@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, SyntheticEvent } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
@@ -14,33 +14,33 @@ import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import LoginForm from "./LoginForm/LoginForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useAuthContext";
-import { mockLoggedInUser } from "../../mocks/mockUser";
 
 export default function Login() {
 	const classes = useStyles();
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState<boolean>(false);
+	const [loginError, setLoginError] = useState<string | null>(null);
 	const { updateLoginContext } = useAuth();
 
 	const handleSubmit = (
 		{ email, password }: { email: string; password: string },
-		{
-			setStatus,
-			setSubmitting,
-		}: FormikHelpers<{ email: string; password: string }>
+		{ setSubmitting }: FormikHelpers<{ email: string; password: string }>
 	) => {
-		setStatus();
-		login(email, password).then(
-			(res) => {
-				// clean this up once connected to backend
-				console.log({ res });
-				// upon connection, get this from backend
-				updateLoginContext(mockLoggedInUser);
-			},
-			(error) => {
+		login(email, password).then((data) => {
+			if (data.error) {
 				setSubmitting(false);
-				setStatus(error);
+				setLoginError(data.error.message);
+				setOpen(true);
+			} else if (data.success) {
+				updateLoginContext(data.success.user);
+			} else {
+				// should not get here from backend but this catch is for an unknown issue
+				console.error({ data });
+
+				setSubmitting(false);
+				setLoginError("An unexpected error occurred. Please try again");
+				setOpen(true);
 			}
-		);
+		});
 	};
 
 	const handleClose = () => {
@@ -48,7 +48,7 @@ export default function Login() {
 	};
 
 	const snackbarHandleClose = (
-		event: React.SyntheticEvent,
+		event: SyntheticEvent,
 		reason: SnackbarCloseReason
 	) => {
 		if (reason === "clickaway") return;
@@ -98,9 +98,9 @@ export default function Login() {
 					open={open}
 					autoHideDuration={6000}
 					onClose={snackbarHandleClose}
-					message="Login failed"
+					message={loginError}
 					action={
-						<React.Fragment>
+						<>
 							<IconButton
 								size="small"
 								aria-label="close"
@@ -109,7 +109,7 @@ export default function Login() {
 							>
 								<CloseIcon fontSize="small" />
 							</IconButton>
-						</React.Fragment>
+						</>
 					}
 				/>
 			</Grid>
