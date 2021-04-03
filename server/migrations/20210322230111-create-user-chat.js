@@ -6,7 +6,7 @@ module.exports = {
 				type: Sequelize.STRING,
 				primaryKey: true,
 				references: {
-					model: "User",
+					model: "Users",
 					key: "email",
 				},
 			},

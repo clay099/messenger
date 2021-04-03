@@ -113,7 +113,6 @@ module.exports = (sequelize, DataTypes) => {
 			});
 			return user;
 		} catch (error) {
-			console.error(error);
 			throw error;
 		}
 	};
