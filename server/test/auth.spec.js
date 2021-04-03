@@ -15,9 +15,12 @@ describe("/POST /login", () => {
 		username: "newTestUserRegister",
 	};
 
-	beforeEach(async () => {
-		await db.User.destroy({ truncate: true, cascade: true });
+	before(async () => {
 		await db.User.create({ ...user });
+	});
+
+	after(async () => {
+		await db.User.destroy({ truncate: true, cascade: true });
 	});
 
 	it("it should login a user", (done) => {
@@ -79,9 +82,12 @@ describe("/POST /loginwithcookies", () => {
 	};
 	const token = createToken(user.email);
 
-	beforeEach(async () => {
-		await db.User.destroy({ truncate: true, cascade: true });
+	before(async () => {
 		await db.User.create({ ...user });
+	});
+
+	after(async () => {
+		await db.User.destroy({ truncate: true, cascade: true });
 	});
 
 	it("it should login a user with token", (done) => {
@@ -139,6 +145,9 @@ describe("/POST /loginwithcookies", () => {
 
 describe("/POST /register", () => {
 	before(async () => {
+		await db.User.destroy({ truncate: true, cascade: true });
+	});
+	after(async () => {
 		await db.User.destroy({ truncate: true, cascade: true });
 	});
 
