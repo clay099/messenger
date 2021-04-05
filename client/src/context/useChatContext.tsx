@@ -6,37 +6,32 @@ import {
 	useEffect,
 	useCallback,
 } from "react";
-import { Message } from "../interface/Message";
+import { Message, MessageApiData } from "../interface/Message";
 import { getChatMessages } from "../helpers/APICalls/getChatMessages";
-import { UserChat } from "../interface/UserChats";
+import { UserChat, UserChatsApiData } from "../interface/UserChats";
 import { getChats } from "../helpers/APICalls/getChats";
 
-import {
-	mockChatMessages,
-	mockChatMessages2,
-	mockChatMessages3,
-} from "../mocks/mockChatMessages";
-import mockChats from "../mocks/mockChats";
-
 interface IChatContext {
-	activeChat: UserChat | null;
+	activeChat: UserChat | null | undefined;
 	selectActiveChat: (chat: UserChat) => void;
-	activeChatMessages: Message[] | null;
+	activeChatMessages: Message[] | null | undefined;
 	userChats: UserChat[] | null;
 }
 
 export const ChatContext = createContext<IChatContext>({
-	activeChat: null,
+	activeChat: undefined,
 	selectActiveChat: () => null,
-	activeChatMessages: null,
+	activeChatMessages: undefined,
 	userChats: null,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
-	const [activeChat, setActiveChat] = useState<UserChat | null>(null);
+	const [activeChat, setActiveChat] = useState<UserChat | null | undefined>(
+		undefined
+	);
 	const [activeChatMessages, setActiveChatMessages] = useState<
-		Message[] | null
-	>(null);
+		Message[] | null | undefined
+	>(undefined);
 	const [userChats, setUserChats] = useState<UserChat[] | null>(null);
 
 	const selectActiveChat = useCallback((chat: UserChat) => {
@@ -64,61 +59,56 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	const saveUserChats = useCallback((userChats: UserChat[]) => {
 		setUserChats(userChats);
 	}, []);
+	const removeUserChats = useCallback(() => {
+		setUserChats(null);
+		setActiveChat(null);
+		setUserChats(null);
+	}, []);
 
 	// get active chat messages
 	useEffect(() => {
-		if (activeChat) {
-			getChatMessages({
-				chatId: activeChat.chatId,
-			})
-				.then((data) => {
-					//TODO: upon connection, get this from backend and delete mockUser variable
-					saveChatMessages(mockChatMessages);
-				})
-				.catch((error) => {
-					console.error({ error });
-
-					// remove below line, only used for testing dashboard in development
-					let displayMockMessage =
-						activeChat.chatId === mockChatMessages[0].chatId
-							? mockChatMessages
-							: activeChat.chatId === mockChatMessages2[0].chatId
-							? mockChatMessages2
-							: mockChatMessages3;
-					saveChatMessages(displayMockMessage);
-
-					// add in following line. only commented out for testing dashboard
-					// removeChatMessages();
+		if (
+			activeChat &&
+			(!activeChatMessages ||
+				activeChatMessages[0].chatId !== activeChat.chatId)
+		) {
+			if (activeChat.lastMessage) {
+				getChatMessages({
+					chatId: activeChat.chatId,
+				}).then((data: MessageApiData) => {
+					if (data.messages) {
+						saveChatMessages(data.messages);
+					} else {
+						removeChatMessages();
+					}
 				});
+			} else {
+				removeChatMessages();
+			}
 		}
-		return () => removeChatMessages();
-		// once connected with socket io. Look to only get chat the first time and the just get new messages and not re-fetch entire conversation every time.
-	}, [activeChat, saveChatMessages, removeChatMessages]);
+	}, [activeChat, saveChatMessages, removeChatMessages, activeChatMessages]);
 
 	// get user Chat messages
 	useEffect(() => {
-		getChats()
-			.then((data) => {
+		getChats().then((data: UserChatsApiData) => {
+			if (data.messages) {
 				//NOTE: we also want last message from chat, backend api route needs to be updated
 
-				//TODO: upon connection, get this from backend and delete mockChats variable
+				saveUserChats(data.messages);
 				// TODO: handle Edge case for when user has not chats to display. Should be able to check for length and return []
-				saveUserChats(mockChats);
 				// default to the first chat being displayed
-				selectActiveChat(mockChats[0]);
-			})
-			.catch((error) => {
+				if (data.messages.length === 0) {
+					setActiveChat(null);
+				} else {
+					selectActiveChat(data.messages[0]);
+				}
+			} else {
 				// think of what to do with error once connected
-				console.log({ error });
-
-				// remove this line, only used for testing dashboard
-				saveUserChats(mockChats);
-				selectActiveChat(mockChats[0]);
-				// add in following lines. only commented out for testing dashboard
-				// removeUserChats(null);
-				// selectChatId(null)
-			});
-	}, [selectActiveChat, saveUserChats]);
+				console.log({ error: data.error?.message });
+				removeUserChats();
+			}
+		});
+	}, [selectActiveChat, saveUserChats, removeUserChats]);
 
 	return (
 		<ChatContext.Provider

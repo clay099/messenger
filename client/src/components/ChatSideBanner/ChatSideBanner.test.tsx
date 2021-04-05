@@ -31,31 +31,33 @@ describe("ChatSideBanner tests", () => {
 		expect(input.value).toBe("test");
 
 		mockChats.forEach((chat) => {
-			expect(getByText(chat.user.username)).toBeInTheDocument();
-			expect(getByText(chat.lastMessage.message)).toBeInTheDocument();
+			expect(getByText(chat.User.username)).toBeInTheDocument();
+			chat.lastMessage &&
+				expect(getByText(chat.lastMessage)).toBeInTheDocument();
 		});
 
 		// should match only one user and show only their data all other users should not be present
 		fireEvent.change(input, { target: { value: "1" } });
 		mockChats.forEach((chat, idx) => {
 			if (idx === 0) {
-				expect(getByText(chat.user.username)).toBeInTheDocument();
-				expect(getByText(chat.lastMessage.message)).toBeInTheDocument();
+				expect(getByText(chat.User.username)).toBeInTheDocument();
+				chat.lastMessage &&
+					expect(getByText(chat.lastMessage)).toBeInTheDocument();
 			} else {
-				expect(queryByText(chat.user.username)).not.toBeInTheDocument();
-				expect(
-					queryByText(chat.lastMessage.message)
-				).not.toBeInTheDocument();
+				expect(queryByText(chat.User.username)).not.toBeInTheDocument();
+				chat.lastMessage &&
+					expect(
+						queryByText(chat.lastMessage)
+					).not.toBeInTheDocument();
 			}
 		});
 
 		// should not match any users and thus not show any chats
 		fireEvent.change(input, { target: { value: "updated" } });
 		mockChats.forEach((chat) => {
-			expect(queryByText(chat.user.username)).not.toBeInTheDocument();
-			expect(
-				queryByText(chat.lastMessage.message)
-			).not.toBeInTheDocument();
+			expect(queryByText(chat.User.username)).not.toBeInTheDocument();
+			chat.lastMessage &&
+				expect(queryByText(chat.lastMessage)).not.toBeInTheDocument();
 		});
 	});
 });

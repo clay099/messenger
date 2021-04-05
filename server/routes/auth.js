@@ -11,6 +11,7 @@ const { authenticateJWT } = require("../middleware/auth");
 router.post("/login", async function (req, res, next) {
 	try {
 		let { email, password } = req.body;
+		console.log({ email, password });
 		if (!email || !password) {
 			throw new Error(`Please include all fields: email, password`);
 		}

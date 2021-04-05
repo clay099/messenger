@@ -31,7 +31,7 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 		userChats.filter((chat) => {
 			if (
 				chat.userEmail.toLowerCase().includes(search) ||
-				chat.user.username.toLowerCase().includes(search)
+				chat.User.username.toLowerCase().includes(search)
 			)
 				return true;
 			return false;

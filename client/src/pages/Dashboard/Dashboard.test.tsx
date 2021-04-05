@@ -37,12 +37,12 @@ describe("Dashboard tests", () => {
 	});
 
 	test("should have loading when waiting for auth provide to check if loggedIn", () => {
-		const { getByText } = render(
+		const { getByRole } = render(
 			<MockChatProvider>
 				<Dashboard />
 			</MockChatProvider>
 		);
-		expect(getByText("Loading...")).toBeInTheDocument();
+		expect(getByRole("progressbar")).toBeInTheDocument();
 	});
 
 	test("should have loading when waiting for auth provide to check if loggedIn", async () => {

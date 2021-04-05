@@ -36,7 +36,7 @@ const Header = ({ handleDrawerToggle }: Props) => {
 					component="h1"
 					variant="h5"
 				>
-					{activeChat?.user.username}
+					{activeChat?.User.username}
 				</Typography>
 			</Grid>
 			{onlineStatus && (

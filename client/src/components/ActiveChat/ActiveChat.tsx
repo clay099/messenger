@@ -7,6 +7,7 @@ import { useAuth } from "../../context/useAuthContext";
 import { dateToTime } from "../../helpers/dateToTime";
 import useStyles from "./useStyles";
 import { useDebouncedCallback } from "use-debounce";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const ActiveChat = () => {
 	const classes = useStyles();
@@ -54,7 +55,16 @@ const ActiveChat = () => {
 			onScroll={handleScroll}
 		>
 			{!activeChatMessages ? (
-				<Typography>Loading...</Typography>
+				activeChatMessages === undefined ? (
+					<CircularProgress />
+				) : (
+					<Box className={`${classes.noActiveChatMessages}`}>
+						<Typography>
+							Chat does not contain any messages.
+						</Typography>
+						<Typography>Please send a message to begin</Typography>
+					</Box>
+				)
 			) : (
 				activeChatMessages.map((message) => (
 					<Box key={message.id} className={classes.message}>
@@ -70,7 +80,7 @@ const ActiveChat = () => {
 							}`}
 						>
 							<Typography className={classes.messageMetaData}>
-								{message.user.username}{" "}
+								{message.User.username}{" "}
 								<i>{dateToTime(message.createdAt)}</i>
 							</Typography>
 							<Typography

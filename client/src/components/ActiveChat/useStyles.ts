@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 		borderRadius: "8px 0px 8px 8px",
 		color: "#91A3C0",
 	},
+	noActiveChatMessages: { margin: "auto" },
 }));
 
 export default useStyles;

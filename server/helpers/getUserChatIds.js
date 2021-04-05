@@ -5,6 +5,7 @@ async function getUserChatIds(email) {
 	const userChat = await db.UserChat.findAll({
 		attributes: ["chatId"],
 		where: { userEmail: email },
+		group: ["chatId"],
 	});
 
 	const chatRooms = userChat.map((chat) => chat.chatId);

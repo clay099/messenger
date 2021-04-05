@@ -29,16 +29,27 @@ const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 			<AvatarDisplay loggedIn />
 			<Box className={classes.chatTextContainer}>
 				<Typography className={classes.chatUser} variant="h5">
-					{chat.user.username}
+					{chat.User?.username}
 				</Typography>
-				<Typography
-					className={`${classes.lastMessage} ${
-						read ? classes.readLastMessage : ""
-					}`}
-					variant="body1"
-				>
-					{chat.lastMessage.message}
-				</Typography>
+				{chat.lastMessage ? (
+					<Typography
+						className={`${classes.lastMessage} ${
+							read ? classes.readLastMessage : ""
+						}`}
+						variant="body1"
+					>
+						{chat.lastMessage}
+					</Typography>
+				) : (
+					<Typography
+						className={`${classes.lastMessage} ${
+							classes.noLastMessage
+						} ${read ? classes.readLastMessage : ""}`}
+						variant="body1"
+					>
+						No Messages
+					</Typography>
+				)}
 			</Box>
 		</Box>
 	);

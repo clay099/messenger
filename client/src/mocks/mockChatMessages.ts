@@ -6,8 +6,8 @@ const mockChatMessages: Message[] = [
 		content: "first message",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 1,
-		createdAt: new Date(Date.now() - 60 * 60 * 60 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 60 * 60 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -17,8 +17,8 @@ const mockChatMessages: Message[] = [
 		content: "second message",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 1,
-		createdAt: new Date(Date.now() - 60 * 59 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 59 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -28,8 +28,8 @@ const mockChatMessages: Message[] = [
 		content: "other use message",
 		senderEmail: "mockTestUser1@gmail.com",
 		chatId: 1,
-		createdAt: new Date(Date.now() - 60 * 50 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 50 * 100)}`,
+		User: {
 			username: "Mock test user 1",
 			email: "mockTestUser1@gmail.com",
 		},
@@ -39,8 +39,8 @@ const mockChatMessages: Message[] = [
 		content: "other use message test 2",
 		senderEmail: "mockTestUser1@gmail.com",
 		chatId: 1,
-		createdAt: new Date(Date.now() - 60 * 40 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 40 * 100)}`,
+		User: {
 			username: "Mock test user 1",
 			email: "mockTestUser1@gmail.com",
 		},
@@ -51,8 +51,8 @@ const mockChatMessages: Message[] = [
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 1,
-		createdAt: new Date(Date.now() - 60 * 20 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 20 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -62,8 +62,8 @@ const mockChatMessages: Message[] = [
 		content: "last message",
 		senderEmail: "mockTestUser1@gmail.com",
 		chatId: 1,
-		createdAt: new Date(Date.now() - 60 * 20 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 20 * 100)}`,
+		User: {
 			username: "Mock test user 1",
 			email: "mockTestUser1@gmail.com",
 		},
@@ -76,8 +76,8 @@ const mockChatMessages2: Message[] = [
 		content: "first message of chat 2",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 2,
-		createdAt: new Date(Date.now() - 60 * 60 * 60 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 60 * 60 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -87,8 +87,8 @@ const mockChatMessages2: Message[] = [
 		content: "second message of chat 2",
 		senderEmail: "mockTestUser2@gmail.com",
 		chatId: 2,
-		createdAt: new Date(Date.now() - 60 * 59 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 59 * 100)}`,
+		User: {
 			username: "Mock test user 2",
 			email: "mockTestUser2@gmail.com",
 		},
@@ -101,8 +101,8 @@ const mockChatMessages3: Message[] = [
 		content: "first message of chat 3",
 		senderEmail: "mockTestUser3@gmail.com",
 		chatId: 3,
-		createdAt: new Date(Date.now() - 60 * 59 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 59 * 100)}`,
+		User: {
 			username: "Mock test user 3",
 			email: "mockTestUser3@gmail.com",
 		},
@@ -112,8 +112,8 @@ const mockChatMessages3: Message[] = [
 		content: "second message of chat 3",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 3,
-		createdAt: new Date(Date.now() - 60 * 60 * 60 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 60 * 60 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -124,8 +124,8 @@ const mockChatMessages3: Message[] = [
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 3,
-		createdAt: new Date(Date.now() - 60 * 60 * 60 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 60 * 60 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -136,8 +136,8 @@ const mockChatMessages3: Message[] = [
 			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 		senderEmail: "mockLoggedInUser@gmail.com",
 		chatId: 3,
-		createdAt: new Date(Date.now() - 60 * 60 * 60 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 60 * 60 * 100)}`,
+		User: {
 			username: "mock LoggedIn user",
 			email: "mockLoggedInUser@gmail.com",
 		},
@@ -147,8 +147,8 @@ const mockChatMessages3: Message[] = [
 		content: "last message of chat 3",
 		senderEmail: "mockTestUser3@gmail.com",
 		chatId: 3,
-		createdAt: new Date(Date.now() - 60 * 59 * 100),
-		user: {
+		createdAt: `${new Date(Date.now() - 60 * 59 * 100)}`,
+		User: {
 			username: "Mock test user 3",
 			email: "mockTestUser3@gmail.com",
 		},

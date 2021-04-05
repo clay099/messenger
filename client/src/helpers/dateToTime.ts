@@ -24,8 +24,9 @@ const DIVISIONS: Division[] = [
 	{ amount: Number.POSITIVE_INFINITY, name: "years" },
 ];
 
-export function dateToTime(date: Date) {
-	let duration = (date.getTime() - Date.now()) / 1000;
+// date string from DB
+export function dateToTime(date: string) {
+	let duration = (new Date(date).getTime() - Date.now()) / 1000;
 
 	for (let i = 0; i <= DIVISIONS.length; i++) {
 		const division = DIVISIONS[i];

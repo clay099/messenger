@@ -4,7 +4,13 @@ const db = require("../models/index");
 async function getChatMessages(chatId) {
 	return await db.Message.findAll({
 		where: { chatId },
-		order: [["createdAt", "DESC"]],
+		order: [["createdAt"]],
+		include: [
+			{
+				model: db.User,
+				attributes: ["username", "email"],
+			},
+		],
 	});
 }
 

@@ -12,8 +12,9 @@ import ChatSideBanner from "../../components/ChatSideBanner/ChatSideBanner";
 import { User } from "../../interface/User";
 import Header from "./Header/Header";
 import ActiveChat from "../../components/ActiveChat/ActiveChat";
-import { ChatProvider } from "../../context/useChatContext";
+import { ChatProvider, useChat } from "../../context/useChatContext";
 import SendMessageForm from "./SendMessageForm/SendMessageForm";
+import { Typography } from "@material-ui/core";
 
 export default function Dashboard() {
 	const [drawerOpen, setDrawerOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function Dashboard() {
 	const drawerSmUp = useMediaQuery(theme.breakpoints.up("sm"));
 
 	const { loggedInUser } = useAuth();
+	const { activeChat } = useChat();
 
 	const history = useHistory();
 
@@ -68,11 +70,19 @@ export default function Dashboard() {
 						</Drawer>
 					)}
 				</Grid>
-				<Grid item className={classes.activeChat}>
-					<Header handleDrawerToggle={handleDrawerToggle} />
-					<ActiveChat />
-					<SendMessageForm />
-				</Grid>
+				{activeChat === null ? (
+					<Typography>
+						{/* TODO: fix this display to be a heading and center of page */}
+						{loggedInUser.username} does not have any chats to
+						display
+					</Typography>
+				) : (
+					<Grid item className={classes.activeChat}>
+						<Header handleDrawerToggle={handleDrawerToggle} />
+						<ActiveChat />
+						<SendMessageForm />
+					</Grid>
+				)}
 			</Grid>
 		</ChatProvider>
 	);

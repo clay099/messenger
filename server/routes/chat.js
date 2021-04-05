@@ -19,8 +19,16 @@ router.get("/", authenticateJWT, async function (req, res, next) {
 		const email = req.user.email;
 		// data for other users involved with chats user is involved with
 		const chatData = await getOtherChatUsers(email);
-
-		return res.json(chatData);
+		const formattedChatData = chatData.map((chatDetails) => {
+			const copiedData = { ...chatDetails.dataValues };
+			const messages = copiedData.Chat.Messages;
+			if (messages && messages[0]) {
+				copiedData.lastMessage = messages[0].content;
+			}
+			delete copiedData.Chat;
+			return copiedData;
+		});
+		return res.json({ messages: formattedChatData });
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));
