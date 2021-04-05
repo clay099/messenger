@@ -14,26 +14,14 @@ import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import SignUpForm from "./SignUpForm/SignUpForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useAuthContext";
+import { useSnackBar } from "../../context/useSnackbarContext";
 
 export interface handleSubmit {}
 
 export default function Register() {
 	const classes = useStyles();
-	const [open, setOpen] = useState(false);
-	const [signUpError, setSignUpError] = useState<string | null>(null);
 	const { updateLoginContext } = useAuth();
-
-	const handleClose = () => {
-		setOpen(false);
-	};
-
-	const snackbarHandleClose = (
-		event: SyntheticEvent,
-		reason: SnackbarCloseReason
-	) => {
-		if (reason === "clickaway") return;
-		setOpen(false);
-	};
+	const { updateSnackBarMessage } = useSnackBar();
 
 	const handleSubmit = (
 		{
@@ -49,8 +37,7 @@ export default function Register() {
 			if (data.error) {
 				console.error({ error: data.error.message });
 				setSubmitting(false);
-				setSignUpError(data.error.message);
-				setOpen(true);
+				updateSnackBarMessage(data.error.message);
 			} else if (data.success) {
 				updateLoginContext(data.success.user);
 			} else {
@@ -58,10 +45,9 @@ export default function Register() {
 				console.error({ data });
 
 				setSubmitting(false);
-				setSignUpError(
+				updateSnackBarMessage(
 					"An unexpected error occurred. Please try again"
 				);
-				setOpen(true);
 			}
 		});
 	};
@@ -101,28 +87,6 @@ export default function Register() {
 					</Box>
 					<Box p={1} alignSelf="center" />
 				</Box>
-				<Snackbar
-					anchorOrigin={{
-						vertical: "bottom",
-						horizontal: "center",
-					}}
-					open={open}
-					autoHideDuration={6000}
-					onClose={snackbarHandleClose}
-					message={signUpError}
-					action={
-						<>
-							<IconButton
-								size="small"
-								aria-label="close"
-								color="inherit"
-								onClick={handleClose}
-							>
-								<CloseIcon fontSize="small" />
-							</IconButton>
-						</>
-					}
-				/>
 			</Grid>
 		</Grid>
 	);

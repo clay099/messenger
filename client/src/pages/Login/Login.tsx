@@ -1,11 +1,7 @@
-import { useState, SyntheticEvent } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
-import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
 import Grid from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import { FormikHelpers } from "formik";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "./useStyles";
@@ -14,12 +10,12 @@ import AuthSideBanner from "../../components/AuthSideBanner/AuthSideBanner";
 import LoginForm from "./LoginForm/LoginForm";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import { useAuth } from "../../context/useAuthContext";
+import { useSnackBar } from "../../context/useSnackbarContext";
 
 export default function Login() {
 	const classes = useStyles();
-	const [open, setOpen] = useState<boolean>(false);
-	const [loginError, setLoginError] = useState<string | null>(null);
 	const { updateLoginContext } = useAuth();
+	const { updateSnackBarMessage } = useSnackBar();
 
 	const handleSubmit = (
 		{ email, password }: { email: string; password: string },
@@ -28,8 +24,7 @@ export default function Login() {
 		login(email, password).then((data) => {
 			if (data.error) {
 				setSubmitting(false);
-				setLoginError(data.error.message);
-				setOpen(true);
+				updateSnackBarMessage(data.error.message);
 			} else if (data.success) {
 				updateLoginContext(data.success.user);
 			} else {
@@ -37,22 +32,11 @@ export default function Login() {
 				console.error({ data });
 
 				setSubmitting(false);
-				setLoginError("An unexpected error occurred. Please try again");
-				setOpen(true);
+				updateSnackBarMessage(
+					"An unexpected error occurred. Please try again"
+				);
 			}
 		});
-	};
-
-	const handleClose = () => {
-		setOpen(false);
-	};
-
-	const snackbarHandleClose = (
-		event: SyntheticEvent,
-		reason: SnackbarCloseReason
-	) => {
-		if (reason === "clickaway") return;
-		setOpen(false);
 	};
 
 	return (
@@ -90,28 +74,6 @@ export default function Login() {
 					</Box>
 					<Box p={1} alignSelf="center" />
 				</Box>
-				<Snackbar
-					anchorOrigin={{
-						vertical: "bottom",
-						horizontal: "center",
-					}}
-					open={open}
-					autoHideDuration={6000}
-					onClose={snackbarHandleClose}
-					message={loginError}
-					action={
-						<>
-							<IconButton
-								size="small"
-								aria-label="close"
-								color="inherit"
-								onClick={handleClose}
-							>
-								<CloseIcon fontSize="small" />
-							</IconButton>
-						</>
-					}
-				/>
 			</Grid>
 		</Grid>
 	);
