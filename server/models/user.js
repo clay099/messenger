@@ -133,7 +133,10 @@ module.exports = (sequelize, DataTypes) => {
 	// only to be used on routes which have auth middleware as that will provide the verification that our user is genuine
 	User.getDetails = async function (email) {
 		try {
-			const user = await this.findOne({ where: { email } });
+			const user = await this.findOne({
+				where: { email },
+				attributes: { exclude: ["password"] },
+			});
 			if (!user) throw new Error("User could not be found");
 			return user;
 		} catch (error) {

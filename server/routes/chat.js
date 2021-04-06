@@ -58,9 +58,13 @@ router.post("/", authenticateJWT, async function (req, res, next) {
 		// actually create chat
 		const chat = await createChatRoom([user, otherUser]);
 
-		return res
-			.status(201)
-			.json({ message: `created chat room ${chat.id}` });
+		return res.status(201).json({
+			created: {
+				message: `created chat room ${chat.id}`,
+				chat,
+				otherUser: otherUser,
+			},
+		});
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));

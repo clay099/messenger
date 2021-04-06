@@ -5,6 +5,7 @@ const db = require("../models/index");
 const { authenticateJWT } = require("../middleware/auth");
 const checkChatInvolvement = require("../middleware/checkChatInvolvement");
 const createMessage = require("../helpers/createMessage");
+const getUser = require("../helpers/getUser");
 
 /** POST / {message:string} => {id: <integer>, content: <string>, senderEmail: <string>, chatId: <integer>, createdAt: <date>, updatedAt:<date>}[]}
  *
@@ -25,8 +26,19 @@ router.post(
 				req.user.email,
 				req.params.chatId
 			);
+			const user = await getUser(req.user.email);
 
-			return res.status(201).json({ createdMessage });
+			return (
+				res
+					.status(201)
+					// spread the user onto the created message object
+					.json({
+						createdMessage: {
+							...createdMessage.dataValues,
+							User: user,
+						},
+					})
+			);
 		} catch (error) {
 			console.error({ error });
 			return next(createError(400, error.message));
