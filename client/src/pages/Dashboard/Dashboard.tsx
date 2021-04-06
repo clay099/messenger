@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -12,7 +13,7 @@ import ChatSideBanner from "../../components/ChatSideBanner/ChatSideBanner";
 import { User } from "../../interface/User";
 import Header from "./Header/Header";
 import ActiveChat from "../../components/ActiveChat/ActiveChat";
-import { ChatProvider, useChat } from "../../context/useChatContext";
+import { useChat } from "../../context/useChatContext";
 import SendMessageForm from "./SendMessageForm/SendMessageForm";
 import { Typography } from "@material-ui/core";
 
@@ -41,49 +42,58 @@ export default function Dashboard() {
 	}
 
 	return (
-		<ChatProvider>
+		<Grid
+			container
+			component="main"
+			className={`${classes.root} ${classes.dashboard}`}
+		>
 			<CssBaseline />
-			<Grid
-				container
-				component="main"
-				className={`${classes.root} ${classes.dashboard}`}
-			>
-				<Grid item className={classes.drawerWrapper}>
-					{drawerSmUp ? (
-						<Drawer variant="permanent" open>
-							<ChatSideBanner loggedInUser={loggedInUser} />
-						</Drawer>
-					) : (
-						<Drawer
-							variant="temporary"
-							anchor="left"
-							open={drawerOpen}
-							onClose={handleDrawerToggle}
-							ModalProps={{
-								keepMounted: true, // Better open performance on mobile.
-							}}
-						>
-							<ChatSideBanner
-								loggedInUser={loggedInUser as User}
-								handleDrawerToggle={handleDrawerToggle}
-							/>
-						</Drawer>
-					)}
-				</Grid>
-				{activeChat === null ? (
-					<Typography>
-						{/* TODO: fix this display to be a heading and center of page */}
-						{loggedInUser.username} does not have any chats to
-						display
-					</Typography>
+			<Grid item className={classes.drawerWrapper}>
+				{drawerSmUp ? (
+					<Drawer variant="permanent" open>
+						<ChatSideBanner loggedInUser={loggedInUser} />
+					</Drawer>
 				) : (
-					<Grid item className={classes.activeChat}>
-						<Header handleDrawerToggle={handleDrawerToggle} />
-						<ActiveChat />
-						<SendMessageForm />
-					</Grid>
+					<Drawer
+						variant="temporary"
+						anchor="left"
+						open={drawerOpen}
+						onClose={handleDrawerToggle}
+						ModalProps={{
+							keepMounted: true, // Better open performance on mobile.
+						}}
+					>
+						<ChatSideBanner
+							loggedInUser={loggedInUser as User}
+							handleDrawerToggle={handleDrawerToggle}
+						/>
+					</Drawer>
 				)}
 			</Grid>
-		</ChatProvider>
+			{!activeChat ? (
+				<Box className={classes.noActiveChatData}>
+					{activeChat === null ? (
+						<>
+							<Typography>
+								{loggedInUser.username} does not have any chats
+								to display
+							</Typography>
+							<Typography>
+								Please use the search box to find other users to
+								talk to
+							</Typography>
+						</>
+					) : (
+						<CircularProgress />
+					)}
+				</Box>
+			) : (
+				<Grid item className={classes.activeChat}>
+					<Header handleDrawerToggle={handleDrawerToggle} />
+					<ActiveChat />
+					<SendMessageForm />
+				</Grid>
+			)}
+		</Grid>
 	);
 }

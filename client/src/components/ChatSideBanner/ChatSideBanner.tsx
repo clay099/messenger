@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import useStyles from "./useStyles";
 import { User } from "../../interface/User";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
@@ -9,6 +10,7 @@ import Search from "../Search/Search";
 import ChatSummary from "../ChatSummary/ChatSummary";
 import { useChat } from "../../context/useChatContext";
 import AuthMenu from "../AuthMenu/AuthMenu";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface Props {
 	loggedInUser: User;
@@ -17,25 +19,39 @@ interface Props {
 
 const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 	const [search, setSearch] = useState<string>("");
+	const [newChatUser, setNewChatUser] = useState<User | null>(null);
 	const classes = useStyles();
 
 	const handleChange = (event: ChangeEvent<{}>, newInputValue: string) => {
 		setSearch(newInputValue);
 	};
 
-	const { userChats } = useChat();
+	const { userChats, selectActiveChat, createNewChat } = useChat();
 
 	// filter the chat for searched users
 	const displayChat =
 		userChats &&
 		userChats.filter((chat) => {
+			const searchLowerCase = search.toLowerCase();
 			if (
-				chat.userEmail.toLowerCase().includes(search) ||
-				chat.User.username.toLowerCase().includes(search)
+				chat.userEmail.toLowerCase().includes(searchLowerCase) ||
+				chat.User.username.toLowerCase().includes(searchLowerCase)
 			)
 				return true;
 			return false;
 		});
+
+	const handleSearchSubmit = (
+		event: ChangeEvent<{}>,
+		newInputValue: User | null
+	) => {
+		newInputValue && setNewChatUser(newInputValue);
+		displayChat && displayChat[0] && selectActiveChat(displayChat[0]);
+	};
+
+	const handleNewChat = () => {
+		newChatUser && createNewChat(newChatUser.email);
+	};
 
 	return (
 		<Grid className={classes.chatSideBanner}>
@@ -50,10 +66,31 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 				<Typography className={classes.chatTitle} variant="h5">
 					Chats
 				</Typography>
-				<Search search={search} handleChange={handleChange} />
+				<Search
+					search={search}
+					handleChange={handleChange}
+					handleSubmit={handleSearchSubmit}
+				/>
 				<Box className={classes.chatSummaryContainer}>
 					{!displayChat ? (
-						<Typography>Loading...</Typography>
+						<CircularProgress />
+					) : displayChat.length === 0 ? (
+						newChatUser ? (
+							<Button
+								fullWidth
+								variant="contained"
+								color="primary"
+								onClick={handleNewChat}
+								className={classes.newChatBtn}
+							>
+								{`New Chat with ${newChatUser.username}`}
+							</Button>
+						) : (
+							<Box className={classes.noChatToSelectText}>
+								<Typography>No Chats Found</Typography>
+								<Typography>Search For Other Users</Typography>
+							</Box>
+						)
 					) : (
 						displayChat.map((chat) => (
 							<ChatSummary

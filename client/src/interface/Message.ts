@@ -14,3 +14,8 @@ export interface MessageApiData {
 	// occurs if there are no messages in the chat
 	message?: string;
 }
+
+export interface CreateMessageApiData {
+	createdMessage?: Message;
+	error?: { message: string };
+}

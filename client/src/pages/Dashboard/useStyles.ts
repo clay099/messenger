@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 			padding: "0 2rem",
 		},
 	},
+	noActiveChatData: { margin: "auto" },
 }));
 
 export default useStyles;

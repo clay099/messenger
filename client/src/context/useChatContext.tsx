@@ -6,16 +6,22 @@ import {
 	useEffect,
 	useCallback,
 } from "react";
-import { Message, MessageApiData } from "../interface/Message";
+import { Message } from "../interface/Message";
 import { getChatMessages } from "../helpers/APICalls/getChatMessages";
-import { UserChat, UserChatsApiData } from "../interface/UserChats";
+import { UserChat } from "../interface/UserChats";
 import { getChats } from "../helpers/APICalls/getChats";
+import { createChat } from "../helpers/APICalls/createChat";
+import submitMessage from "../helpers/APICalls/submitMessage";
+import { createdApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
+import { useSnackBar } from "./useSnackbarContext";
 
 interface IChatContext {
 	activeChat: UserChat | null | undefined;
 	selectActiveChat: (chat: UserChat) => void;
 	activeChatMessages: Message[] | null | undefined;
 	userChats: UserChat[] | null;
+	createNewChat: (email: string) => void;
+	handleNewMessage: (message: string, callback: () => void) => void;
 }
 
 export const ChatContext = createContext<IChatContext>({
@@ -23,6 +29,8 @@ export const ChatContext = createContext<IChatContext>({
 	selectActiveChat: () => null,
 	activeChatMessages: undefined,
 	userChats: null,
+	createNewChat: () => null,
+	handleNewMessage: () => null,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
@@ -34,8 +42,9 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	>(undefined);
 	const [userChats, setUserChats] = useState<UserChat[] | null>(null);
 
+	const { updateSnackBarMessage } = useSnackBar();
+
 	const selectActiveChat = useCallback((chat: UserChat) => {
-		setActiveChat(chat);
 		setUserChats((state) => {
 			if (!state) return null;
 			return state.map((userChat) => {
@@ -46,6 +55,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				}
 			});
 		});
+		setActiveChat(chat);
 	}, []);
 
 	const saveChatMessages = useCallback((messages: Message[]) => {
@@ -59,11 +69,82 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	const saveUserChats = useCallback((userChats: UserChat[]) => {
 		setUserChats(userChats);
 	}, []);
+
 	const removeUserChats = useCallback(() => {
 		setUserChats(null);
 		setActiveChat(null);
 		setUserChats(null);
 	}, []);
+
+	const createNewChat = useCallback(
+		(email: string) => {
+			if (email) {
+				createChat({ email }).then((data) => {
+					if (data.created) {
+						removeChatMessages();
+						// create new userChat object
+						const newUserChat = createdApiChatDataToUserChat(
+							data.created
+						);
+						setActiveChat(newUserChat);
+						setUserChats((state) => {
+							if (!state) return [newUserChat];
+							return [...state, newUserChat];
+						});
+					} else if (data.error) {
+						updateSnackBarMessage(data.error.message);
+					} else {
+						// should not get here but future proof for change in API
+						updateSnackBarMessage(
+							"An unexpected error occurred. Please try again"
+						);
+					}
+				});
+			}
+		},
+		[removeChatMessages, updateSnackBarMessage]
+	);
+
+	const handleNewMessage = useCallback(
+		async (message: string, resetForm: () => void) => {
+			if (activeChat) {
+				submitMessage(activeChat.chatId, message).then((data) => {
+					if (data.createdMessage) {
+						const newMessage = data.createdMessage;
+						setActiveChatMessages((activeChatState) => {
+							if (activeChatState) {
+								return [...activeChatState, newMessage];
+							} else {
+								return [newMessage];
+							}
+						});
+						setUserChats((userChatState) => {
+							if (!userChatState) return null;
+							return userChatState.map((userChat) => {
+								if (newMessage.chatId !== userChat.chatId) {
+									return userChat;
+								} else {
+									return {
+										...userChat,
+										lastMessage: newMessage.content,
+									};
+								}
+							});
+						});
+					} else if (data.error) {
+						updateSnackBarMessage(data.error.message);
+					} else {
+						// should not get here but future proof for change in API
+						updateSnackBarMessage(
+							"An unexpected error occurred. Please try again"
+						);
+					}
+				});
+				resetForm();
+			}
+		},
+		[activeChat, updateSnackBarMessage]
+	);
 
 	// get active chat messages
 	useEffect(() => {
@@ -75,10 +156,17 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 			if (activeChat.lastMessage) {
 				getChatMessages({
 					chatId: activeChat.chatId,
-				}).then((data: MessageApiData) => {
+				}).then((data) => {
 					if (data.messages) {
 						saveChatMessages(data.messages);
+					} else if (data.error) {
+						updateSnackBarMessage(data.error.message);
+						removeChatMessages();
 					} else {
+						// should not get here but future proof for change in API
+						updateSnackBarMessage(
+							"An unexpected error occurred. Please try again"
+						);
 						removeChatMessages();
 					}
 				});
@@ -86,17 +174,19 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				removeChatMessages();
 			}
 		}
-	}, [activeChat, saveChatMessages, removeChatMessages, activeChatMessages]);
+	}, [
+		activeChat,
+		saveChatMessages,
+		removeChatMessages,
+		activeChatMessages,
+		updateSnackBarMessage,
+	]);
 
 	// get user Chat messages
 	useEffect(() => {
-		getChats().then((data: UserChatsApiData) => {
+		getChats().then((data) => {
 			if (data.messages) {
-				//NOTE: we also want last message from chat, backend api route needs to be updated
-
 				saveUserChats(data.messages);
-				// TODO: handle Edge case for when user has not chats to display. Should be able to check for length and return []
-				// default to the first chat being displayed
 				if (data.messages.length === 0) {
 					setActiveChat(null);
 				} else {
@@ -104,7 +194,6 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				}
 			} else {
 				// think of what to do with error once connected
-				console.log({ error: data.error?.message });
 				removeUserChats();
 			}
 		});
@@ -117,6 +206,8 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				activeChat,
 				selectActiveChat,
 				userChats,
+				createNewChat,
+				handleNewMessage,
 			}}
 		>
 			{children}

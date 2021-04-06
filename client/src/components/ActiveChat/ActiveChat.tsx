@@ -31,11 +31,29 @@ const ActiveChat = () => {
 
 	const debounceScroll = useDebouncedCallback(
 		(top: number, chatId: number) => {
-			setSavedScrollPosition((state) => {
-				const updatedState = new Map(state);
-				updatedState.set(chatId, top);
-				return updatedState;
-			});
+			if (chatContainerRef.current) {
+				// <=3 to allow for 3px rounding
+				const bottom =
+					Math.abs(
+						chatContainerRef.current.scrollHeight -
+							top -
+							chatContainerRef.current.clientHeight
+					) <= 3;
+				if (bottom) {
+					savedScrollPosition.get(chatId) &&
+						setSavedScrollPosition((state) => {
+							const updatedState = new Map(state);
+							updatedState.delete(chatId);
+							return updatedState;
+						});
+				} else {
+					setSavedScrollPosition((state) => {
+						const updatedState = new Map(state);
+						updatedState.set(chatId, top);
+						return updatedState;
+					});
+				}
+			}
 		},
 		500
 	);
