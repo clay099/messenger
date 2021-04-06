@@ -46,6 +46,41 @@ module.exports = {
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
+			{
+				email: "tonyStart@gmail.com",
+				username: "Tony Start",
+				password: hashedPW,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				email: "steveRogers@gmail.com",
+				username: "Steve Rogers",
+				password: hashedPW,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				email: "peterParker@gmail.com",
+				username: "Peter Parker",
+				password: hashedPW,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				email: "wandaMaximoff@gmail.com",
+				username: "Wanda Maximoff",
+				password: hashedPW,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+			{
+				email: "hulk@gmail.com",
+				username: "Bruce Banner",
+				password: hashedPW,
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
 		]);
 		await queryInterface.bulkInsert("Chats", [
 			{ id: 1, createdAt: new Date(), updatedAt: new Date() },
