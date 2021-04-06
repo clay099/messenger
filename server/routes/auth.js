@@ -27,7 +27,6 @@ router.post("/login", async function (req, res, next) {
 			},
 		});
 	} catch (error) {
-		console.error({ error });
 		return next(createError(400, error.message));
 	}
 });
@@ -86,7 +85,6 @@ router.post("/register", async function (req, res, next) {
 			},
 		});
 	} catch (error) {
-		console.error({ error });
 		let errorText;
 		if (error.errors) {
 			// catches validation errors. As there could be multiple turns the array into a string of all errors

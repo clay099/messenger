@@ -11,6 +11,9 @@
 		"migrate:initial": "npx sequelize-cli db:migrate:undo:all",
 		"seed": "npx sequelize-cli db:seed:all",
 		"seed:reset": "npx sequelize-cli db:seed:undo:all"
+		"test:migrate": "NODE_ENV=test npx sequelize-cli db:migrate",
+		"test:migrateDown": "NODE_ENV=test npx sequelize-cli db:migrate:undo",
+		"test:migrateInitial": "NODE_ENV=test npx sequelize-cli db:migrate:undo:all"
 	},
 	"dependencies": {
 		"bcrypt": "^5.0.1",
