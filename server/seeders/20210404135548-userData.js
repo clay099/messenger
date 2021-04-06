@@ -82,33 +82,38 @@ module.exports = {
 				updatedAt: new Date(),
 			},
 		]);
-		await queryInterface.bulkInsert("Chats", [
-			{ id: 1, createdAt: new Date(), updatedAt: new Date() },
-			{ id: 2, createdAt: new Date(), updatedAt: new Date() },
-			{ id: 3, createdAt: new Date(), updatedAt: new Date() },
-		]);
+		const createdChats = await queryInterface.bulkInsert(
+			"Chats",
+			[
+				{ createdAt: new Date(), updatedAt: new Date() },
+				{ createdAt: new Date(), updatedAt: new Date() },
+				{ createdAt: new Date(), updatedAt: new Date() },
+			],
+			{ returning: true }
+		);
+
 		await queryInterface.bulkInsert("UserChats", [
 			{
 				userEmail: "joeBlogs@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				userEmail: "tom@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				userEmail: "joeBlogs@gmail.com",
-				chatId: 2,
+				chatId: createdChats[1].id,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
 			{
 				userEmail: "harry@gmail.com",
-				chatId: 2,
+				chatId: createdChats[1].id,
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			},
@@ -117,35 +122,35 @@ module.exports = {
 			{
 				content: "first message",
 				senderEmail: "joeBlogs@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(Date.now() - 60 * 60 * 60 * 100),
 				updatedAt: new Date(Date.now() - 60 * 60 * 60 * 100),
 			},
 			{
 				content: "second message",
 				senderEmail: "joeBlogs@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(Date.now() - 60 * 59 * 60 * 100),
 				updatedAt: new Date(Date.now() - 60 * 59 * 60 * 100),
 			},
 			{
 				content: "toms first message",
 				senderEmail: "tom@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(Date.now() - 60 * 50 * 60 * 100),
 				updatedAt: new Date(Date.now() - 60 * 50 * 60 * 100),
 			},
 			{
 				content: "Joes last message",
 				senderEmail: "joeBlogs@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(Date.now() - 60 * 40 * 60 * 100),
 				updatedAt: new Date(Date.now() - 60 * 40 * 60 * 100),
 			},
 			{
 				content: "Last chat message",
 				senderEmail: "tom@gmail.com",
-				chatId: 1,
+				chatId: createdChats[0].id,
 				createdAt: new Date(Date.now() - 60 * 30 * 60 * 100),
 				updatedAt: new Date(Date.now() - 60 * 30 * 60 * 100),
 			},
