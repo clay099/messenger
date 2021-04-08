@@ -5,7 +5,7 @@ export interface Message {
 	senderEmail: string;
 	chatId: number;
 	createdAt: string;
-	User: User;
+	user: User;
 }
 
 export interface MessageApiData {

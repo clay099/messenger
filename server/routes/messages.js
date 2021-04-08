@@ -35,7 +35,7 @@ router.post(
 					.json({
 						createdMessage: {
 							...createdMessage.dataValues,
-							User: user,
+							user,
 						},
 					})
 			);

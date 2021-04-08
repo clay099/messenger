@@ -1,6 +1,7 @@
 import { CreatedNewChatApiData } from "../interface/NewChatApiData";
 import { UserChat } from "../interface/UserChats";
 
+// function to create the object without needing to do a API query
 export function createdApiChatDataToUserChat(
 	data: CreatedNewChatApiData
 ): UserChat {
@@ -9,7 +10,7 @@ export function createdApiChatDataToUserChat(
 		chatId: data.chat.id,
 		createdAt: data.chat.createdAt,
 		updatedAt: data.chat.updatedAt,
-		User: data.otherUser,
-		readChat: true,
+		user: data.otherUser,
+		unread: 0,
 	};
 }

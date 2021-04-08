@@ -18,10 +18,15 @@ module.exports = (sequelize, DataTypes) => {
 			this.belongsToMany(models.Chat, {
 				through: models.UserChat,
 				foreignKey: "userEmail",
+				as: "chat",
 			});
-			this.hasMany(models.UserChat, { foreignKey: "userEmail" });
+			this.hasMany(models.UserChat, {
+				foreignKey: "userEmail",
+				as: "userChat",
+			});
 			this.hasMany(models.Message, {
 				foreignKey: "senderEmail",
+				as: "message",
 			});
 		}
 

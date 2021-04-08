@@ -1,14 +1,16 @@
 const db = require("../models/index");
 
-/** gets an array filled with the chatId the user is involved with */
+/** returns an object {<chatId>: <unread>} where then chatID are chats the user is involved with */
 async function getUserChatIds(email) {
 	const userChat = await db.UserChat.findAll({
-		attributes: ["chatId"],
+		attributes: ["chatId", "unread"],
 		where: { userEmail: email },
-		group: ["chatId"],
+		group: ["chatId", "unread"],
 	});
 
-	const chatRooms = userChat.map((chat) => chat.chatId);
+	const chatRooms = {};
+	userChat.forEach((chat) => (chatRooms[chat.chatId] = chat.unread));
+
 	return chatRooms;
 }
 

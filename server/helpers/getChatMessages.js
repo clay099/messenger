@@ -8,6 +8,7 @@ async function getChatMessages(chatId) {
 		include: [
 			{
 				model: db.User,
+				as: "user",
 				attributes: ["username", "email"],
 			},
 		],

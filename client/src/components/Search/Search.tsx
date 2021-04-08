@@ -10,7 +10,10 @@ import { searchUsers } from "../../helpers/APICalls/searchUsers";
 interface Props {
 	search: string;
 	handleChange: (event: ChangeEvent<{}>, newInputValue: string) => void;
-	handleSubmit: (event: ChangeEvent<{}>, newInputValue: User | null) => void;
+	handleSubmit: (
+		event: ChangeEvent<{}>,
+		newInputValue: User | null | string
+	) => void;
 }
 const Search = ({ search, handleChange, handleSubmit }: Props) => {
 	const [open, setOpen] = useState(false);
@@ -30,7 +33,6 @@ const Search = ({ search, handleChange, handleSubmit }: Props) => {
 
 		async function searchAndSaveUsers() {
 			// send request to backend API to get users limited to 20.
-			// clean this function up when connected to the backend
 			setLoading(true);
 			const users = await searchUsers({
 				search: debouncedSearch,
@@ -74,6 +76,7 @@ const Search = ({ search, handleChange, handleSubmit }: Props) => {
 				inputValue={search}
 				noOptionsText="No Users Found"
 				onChange={handleSubmit}
+				freeSolo
 				renderInput={(params) => (
 					<div className={classes.search}>
 						<InputBase

@@ -12,9 +12,14 @@ import { UserChat } from "../interface/UserChats";
 import { getChats } from "../helpers/APICalls/getChats";
 import { createChat } from "../helpers/APICalls/createChat";
 import submitMessage from "../helpers/APICalls/submitMessage";
+import updateChatUnreadMessage from "../helpers/APICalls/updateChatUnreadMessage";
 import { createdApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
 import { useSnackBar } from "./useSnackbarContext";
 
+interface UpdateChatUnreadCountProps {
+	chatId: number;
+	resetRead?: boolean;
+}
 interface IChatContext {
 	activeChat: UserChat | null | undefined;
 	selectActiveChat: (chat: UserChat) => void;
@@ -22,6 +27,10 @@ interface IChatContext {
 	userChats: UserChat[] | null;
 	createNewChat: (email: string) => void;
 	handleNewMessage: (message: string, callback: () => void) => void;
+	updateChatUnreadCount: ({
+		chatId,
+		resetRead,
+	}: UpdateChatUnreadCountProps) => void;
 }
 
 export const ChatContext = createContext<IChatContext>({
@@ -31,6 +40,7 @@ export const ChatContext = createContext<IChatContext>({
 	userChats: null,
 	createNewChat: () => null,
 	handleNewMessage: () => null,
+	updateChatUnreadCount: () => null,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
@@ -44,7 +54,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 
 	const { updateSnackBarMessage } = useSnackBar();
 
-	const selectActiveChat = useCallback((chat: UserChat) => {
+	const selectActiveChat = useCallback(async (chat: UserChat) => {
 		setUserChats((state) => {
 			if (!state) return null;
 			return state.map((userChat) => {
@@ -75,6 +85,49 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		setActiveChat(null);
 		setUserChats(null);
 	}, []);
+
+	const updateChatUnreadCount = useCallback(
+		async ({ chatId, resetRead }: UpdateChatUnreadCountProps) => {
+			if (resetRead && activeChat && activeChat.unread !== 0) {
+				// if chat unread count is already 0 we don't want to update state or send to API
+				setUserChats((userChats) => {
+					if (!userChats) return null;
+					return userChats.map((userChat) => {
+						if (userChat.chatId === chatId) {
+							return {
+								...userChat,
+								unread: 0,
+							};
+						} else {
+							return userChat;
+						}
+					});
+				});
+				// send updated value to API
+				updateChatUnreadMessage(chatId).then((data) => {
+					if (data.error) {
+						updateSnackBarMessage(data.error.message);
+					}
+				});
+			} else if (!resetRead) {
+				// only run this if we are incrementing the unread message count. No need to update API as it will increment based on the message being sent
+				setUserChats((userChats) => {
+					if (!userChats) return null;
+					return userChats.map((userChat) => {
+						if (userChat.chatId === chatId) {
+							return {
+								...userChat,
+								unread: userChat.unread + 1,
+							};
+						} else {
+							return userChat;
+						}
+					});
+				});
+			}
+		},
+		[activeChat, updateSnackBarMessage]
+	);
 
 	const createNewChat = useCallback(
 		(email: string) => {
@@ -193,7 +246,6 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 					selectActiveChat(data.messages[0]);
 				}
 			} else {
-				// think of what to do with error once connected
 				removeUserChats();
 			}
 		});
@@ -208,6 +260,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				userChats,
 				createNewChat,
 				handleNewMessage,
+				updateChatUnreadCount,
 			}}
 		>
 			{children}

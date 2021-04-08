@@ -26,31 +26,33 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 		setSearch(newInputValue);
 	};
 
-	const { userChats, selectActiveChat, createNewChat } = useChat();
+	const { userChats, createNewChat } = useChat();
 
 	// filter the chat for searched users
 	const displayChat =
 		userChats &&
 		userChats.filter((chat) => {
 			const searchLowerCase = search.toLowerCase();
-			if (
+			return (
 				chat.userEmail.toLowerCase().includes(searchLowerCase) ||
-				chat.User.username.toLowerCase().includes(searchLowerCase)
-			)
-				return true;
-			return false;
+				chat.user.username.toLowerCase().includes(searchLowerCase)
+			);
 		});
 
 	const handleSearchSubmit = (
 		event: ChangeEvent<{}>,
-		newInputValue: User | null
+		newInputValue: User | null | string
 	) => {
-		newInputValue && setNewChatUser(newInputValue);
-		displayChat && displayChat[0] && selectActiveChat(displayChat[0]);
+		if (newInputValue && typeof newInputValue !== "string") {
+			setNewChatUser(newInputValue);
+		}
 	};
 
 	const handleNewChat = () => {
-		newChatUser && createNewChat(newChatUser.email);
+		if (newChatUser) {
+			createNewChat(newChatUser.email);
+			setSearch("");
+		}
 	};
 
 	return (

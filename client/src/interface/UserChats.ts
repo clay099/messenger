@@ -3,13 +3,17 @@ export interface UserChat {
 	chatId: number;
 	createdAt: Date;
 	updatedAt: Date;
-	User: { username: string; email: string };
+	user: { username: string; email: string };
+	unread: number;
 	lastMessage?: string;
-	// look to transform this and save on DB
-	readChat?: boolean;
 }
 
 export interface UserChatsApiData {
 	messages?: UserChat[];
+	error?: { message: string };
+}
+
+export interface UserChatUpdateApiData {
+	message?: string;
 	error?: { message: string };
 }

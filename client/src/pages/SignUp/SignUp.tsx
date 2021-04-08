@@ -35,7 +35,7 @@ export default function Register() {
 				setSubmitting(false);
 				updateSnackBarMessage(data.error.message);
 			} else if (data.success) {
-				updateLoginContext(data.success.user);
+				updateLoginContext(data.success);
 			} else {
 				// should not get here from backend but this catch is for an unknown issue
 				console.error({ data });

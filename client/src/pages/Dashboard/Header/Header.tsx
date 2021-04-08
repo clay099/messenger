@@ -4,6 +4,7 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import { OnlineBadge } from "../../../components/StyledBadge/StyledBadge";
 import { useChat } from "../../../context/useChatContext";
+import { useAuth } from "../../../context/useAuthContext";
 import Grid from "@material-ui/core/Grid";
 
 interface Props {
@@ -13,9 +14,13 @@ interface Props {
 const Header = ({ handleDrawerToggle }: Props) => {
 	const classes = useStyles();
 	const { activeChat } = useChat();
+	const { onlineUsers } = useAuth();
 
 	// once set up with socket.IO update this to be dynamic
-	const onlineStatus = true;
+	const onlineStatus =
+		onlineUsers && activeChat && onlineUsers.has(activeChat.userEmail)
+			? true
+			: false;
 
 	return (
 		<Grid container spacing={1} className={classes.activeChatHeader}>
@@ -36,7 +41,7 @@ const Header = ({ handleDrawerToggle }: Props) => {
 					component="h1"
 					variant="h5"
 				>
-					{activeChat?.User.username}
+					{activeChat?.user.username}
 				</Typography>
 			</Grid>
 			{onlineStatus && (
