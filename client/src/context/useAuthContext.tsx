@@ -39,7 +39,7 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 				if (!state) {
 					return new Set(data.onlineUsers);
 				} else {
-					data.onlineUsers.forEach((email) => state.add(email));
+					return new Set([...state, ...data.onlineUsers]);
 				}
 			});
 			history.push("/dashboard");

@@ -26,7 +26,7 @@ router.get("/", authenticateJWT, async function (req, res, next) {
 	}
 });
 
-/** POST / {email:string} => {message: "created chat room <integer>"}
+/** POST / {email:<string>} => {message: "created chat room <integer>"}
  *
  * create new chat between users
  */
@@ -87,11 +87,11 @@ router.get(
 	}
 );
 
-/** POST / {} => {id: <integer>, content: <string>, senderEmail: <string>, chatId: <integer>, createdAt: <date>, updatedAt:<date>}[]}
+/** PATCH / {unread: <number>} => {message: <string>}
  *
  * update unread message count
  */
-router.post(
+router.patch(
 	"/:chatId",
 	authenticateJWT,
 	checkChatInvolvement,

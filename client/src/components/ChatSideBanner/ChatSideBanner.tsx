@@ -24,6 +24,9 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 
 	const handleChange = (event: ChangeEvent<{}>, newInputValue: string) => {
 		setSearch(newInputValue);
+		if (newChatUser) {
+			setNewChatUser(null);
+		}
 	};
 
 	const { userChats, createNewChat } = useChat();

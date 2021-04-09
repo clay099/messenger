@@ -6,7 +6,7 @@ export default async function updateChatUnreadMessage(
 	unread = 0
 ): Promise<UserChatUpdateApiData> {
 	const fetchOptions = {
-		method: "POST",
+		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ unread }),
 	};
