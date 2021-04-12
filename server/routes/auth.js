@@ -19,13 +19,11 @@ router.post("/login", async function (req, res, next) {
 		let { token, user } = await db.User.login({ email, password });
 		// adds token as cookie
 		addToken(res, token);
-		onlineUsers.add(user.email);
 
 		return res.json({
 			success: {
 				message: "logged in",
 				user: { username: user.username, email: user.email },
-				onlineUsers: [...onlineUsers],
 			},
 		});
 	} catch (error) {
@@ -44,13 +42,10 @@ router.get(
 			// if user is authenticated with token from HTTP only cookies we can provide them their details
 			const user = await db.User.getDetails(req.user.email);
 
-			onlineUsers.add(user.email);
-
 			return res.json({
 				success: {
 					message: "logged in",
 					user: { username: user.username, email: user.email },
-					onlineUsers: [...onlineUsers],
 				},
 			});
 		} catch (error) {
@@ -84,13 +79,10 @@ router.post("/register", async function (req, res, next) {
 		// adds token as cookie
 		addToken(res, token);
 
-		onlineUsers.add(user.email);
-
 		return res.status(201).json({
 			success: {
 				message: "New user created",
 				user: { username: user.username, email: user.email },
-				onlineUsers: [...onlineUsers],
 			},
 		});
 	} catch (error) {
@@ -116,8 +108,6 @@ router.post("/register", async function (req, res, next) {
 router.get("/logout", async function (req, res, next) {
 	try {
 		removeToken(res);
-
-		onlineUsers.delete(user.email);
 
 		return res.json({
 			success: {
