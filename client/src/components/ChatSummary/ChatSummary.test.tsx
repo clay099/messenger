@@ -28,7 +28,9 @@ describe("ChatSummary tests", () => {
 				<ChatSummary chat={mockChats[0]} />
 			</MockChatProvider>
 		);
-		expect(getByText(mockChats[0].user.username)).toBeInTheDocument();
-		expect(getByText(mockChats[0].lastMessage.message)).toBeInTheDocument();
+		expect(getByText(mockChats[0].User.username)).toBeInTheDocument();
+		if (mockChats[0].lastMessage) {
+			expect(getByText(mockChats[0].lastMessage)).toBeInTheDocument();
+		}
 	});
 });

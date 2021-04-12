@@ -14,8 +14,8 @@ describe("ActiveChat tests", () => {
 	});
 
 	test("should have loading screen", () => {
-		const { getByText } = render(<ActiveChat />);
-		expect(getByText("Loading...")).toBeInTheDocument();
+		const { getByRole } = render(<ActiveChat />);
+		expect(getByRole("progressbar")).toBeInTheDocument();
 	});
 
 	test("rendered messages snapshot test", () => {

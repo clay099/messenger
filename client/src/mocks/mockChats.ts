@@ -10,7 +10,8 @@ const mockChats: UserChat[] = [
 			username: "Mock test user 1",
 			email: "mockTestUser1@gmail.com",
 		},
-		lastMessage: { message: "last message from user 1" },
+		lastMessage: "last message from user 1",
+		unread: 0,
 	},
 	{
 		userEmail: "mockTestUser2@gmail.com",
@@ -21,7 +22,8 @@ const mockChats: UserChat[] = [
 			username: "Mock test user 2",
 			email: "mockTestUser2@gmail.com",
 		},
-		lastMessage: { message: "last message from user 2" },
+		lastMessage: "last message from user 2",
+		unread: 0,
 	},
 	{
 		userEmail: "mockTestUser3@gmail.com",
@@ -32,10 +34,9 @@ const mockChats: UserChat[] = [
 			username: "Mock test user 3",
 			email: "mockTestUser3@gmail.com",
 		},
-		lastMessage: {
-			message:
-				"last message from user 3. This is a test for a long message",
-		},
+		lastMessage:
+			"last message from user 3. This is a test for a long message",
+		unread: 1,
 	},
 ];
 

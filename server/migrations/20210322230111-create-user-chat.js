@@ -2,7 +2,7 @@
 module.exports = {
 	up: async (queryInterface, Sequelize) => {
 		await queryInterface.createTable("UserChats", {
-			UserEmail: {
+			userEmail: {
 				type: Sequelize.STRING,
 				primaryKey: true,
 				references: {
@@ -10,7 +10,7 @@ module.exports = {
 					key: "email",
 				},
 			},
-			ChatId: {
+			chatId: {
 				type: Sequelize.INTEGER,
 				primaryKey: true,
 				references: {
@@ -29,6 +29,6 @@ module.exports = {
 		});
 	},
 	down: async (queryInterface, Sequelize) => {
-		await queryInterface.dropTable("user-chats");
+		await queryInterface.dropTable("UserChats");
 	},
 };

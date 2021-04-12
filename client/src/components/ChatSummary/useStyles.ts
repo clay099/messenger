@@ -24,6 +24,9 @@ const useStyles = makeStyles((theme) => ({
 	readLastMessage: {
 		fontWeight: 400,
 	},
+	noLastMessage: {
+		fontStyle: "italic",
+	},
 }));
 
 export default useStyles;

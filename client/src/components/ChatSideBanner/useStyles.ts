@@ -30,6 +30,12 @@ const useStyles = makeStyles((theme) => ({
 		margin: "1rem 0",
 	},
 	chatSummaryContainer: { overflowY: "auto" },
+	newChatBtn: {
+		margin: "1rem 0",
+	},
+	noChatToSelectText: {
+		margin: "1rem 0",
+	},
 }));
 
 export default useStyles;

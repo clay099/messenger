@@ -3,7 +3,7 @@ const createError = require("http-errors");
 const router = express.Router();
 const { authenticateJWT } = require("../middleware/auth");
 const checkChatInvolvement = require("../middleware/checkChatInvolvement");
-const getUserChatIds = require("../helpers/getUserChatIds");
+const updateChatUnreadMessage = require("../helpers/updateChatUnreadMessage");
 const getOtherChatUsers = require("../helpers/getOtherChatUsers");
 const checkChatExists = require("../helpers/checkChatExists");
 const getUser = require("../helpers/getUser");
@@ -19,15 +19,14 @@ router.get("/", authenticateJWT, async function (req, res, next) {
 		const email = req.user.email;
 		// data for other users involved with chats user is involved with
 		const chatData = await getOtherChatUsers(email);
-
-		return res.json(chatData);
+		return res.json({ messages: chatData });
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));
 	}
 });
 
-/** POST / {email:string} => {message: "created chat room <integer>"}
+/** POST / {email:<string>} => {message: "created chat room <integer>"}
  *
  * create new chat between users
  */
@@ -50,9 +49,13 @@ router.post("/", authenticateJWT, async function (req, res, next) {
 		// actually create chat
 		const chat = await createChatRoom([user, otherUser]);
 
-		return res
-			.status(201)
-			.json({ message: `created chat room ${chat.id}` });
+		return res.status(201).json({
+			created: {
+				message: `created chat room ${chat.id}`,
+				chat,
+				otherUser,
+			},
+		});
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));
@@ -77,6 +80,40 @@ router.get(
 				});
 
 			return res.json({ messages: chatMessages });
+		} catch (error) {
+			console.error({ error });
+			return next(createError(400, error.message));
+		}
+	}
+);
+
+/** PATCH / {unread: <number>} => {message: <string>}
+ *
+ * update unread message count
+ */
+router.patch(
+	"/:chatId",
+	authenticateJWT,
+	checkChatInvolvement,
+	async function (req, res, next) {
+		try {
+			let { unread } = req.body;
+
+			if (!(unread >= 0)) {
+				throw new Error(
+					`An updated unread message count was not included`
+				);
+			}
+
+			await updateChatUnreadMessage(
+				req.params.chatId,
+				req.user.email,
+				unread
+			);
+
+			return res.json({
+				message: `Updated unread messages to ${unread}`,
+			});
 		} catch (error) {
 			console.error({ error });
 			return next(createError(400, error.message));

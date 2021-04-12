@@ -16,7 +16,9 @@ If you would like to use a a separate SQL database please also include DIALECT=`
 
 There is a default database of `hatchways-messenger` for use in development environments and a default of `hatchways-messenger-test` for testing environments. It is expected in production environments that the database will be provided from the environment and a default is not set.
 
-Finally to insert the tables into your database run `yarn migrate` or `npm run migrate`. Please note your database will need to be setup prior to inserting tables.
+To insert the tables into your database run `yarn migrate` or `npm run migrate`. Please note your database will need to be setup prior to inserting tables.
+
+To insert seed data into your tables run `yarn seed` or `npm run seed`
 
 ### Server Variables
 

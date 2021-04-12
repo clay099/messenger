@@ -15,7 +15,7 @@ router.get("/", authenticateJWT, async function (req, res, next) {
 	try {
 		const user = await getUser(req.user.email);
 		let otherUsers = await user.getOtherUsers(req.query.search);
-		return res.json(otherUsers);
+		return res.json({ otherUsers });
 	} catch (error) {
 		console.error({ error });
 		return next(createError(400, error.message));

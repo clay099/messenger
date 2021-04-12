@@ -1,20 +1,20 @@
 import { ChangeEvent, SyntheticEvent, useState } from "react";
 import TextField from "@material-ui/core/TextField";
-import submitMessage from "../../../helpers/APICalls/submitMessage";
 import useStyles from "./useStyles";
 import { useChat } from "../../../context/useChatContext";
 
 const SendMessageForm = () => {
 	const [message, setMessage] = useState("");
-	const { activeChat } = useChat();
+	const { handleNewMessage } = useChat();
 	const classes = useStyles();
+
+	const resetForm = () => {
+		setMessage("");
+	};
 
 	const handleSubmit = async (event: SyntheticEvent) => {
 		event.preventDefault();
-		if (activeChat) {
-			await submitMessage(activeChat.chatId, message);
-			setMessage("");
-		}
+		handleNewMessage(message, resetForm);
 	};
 
 	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

@@ -7,6 +7,8 @@ import { useAuth } from "../../context/useAuthContext";
 import { dateToTime } from "../../helpers/dateToTime";
 import useStyles from "./useStyles";
 import { useDebouncedCallback } from "use-debounce";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import clsx from "clsx";
 
 const ActiveChat = () => {
 	const classes = useStyles();
@@ -16,7 +18,7 @@ const ActiveChat = () => {
 	);
 
 	const { loggedInUser } = useAuth();
-	const { activeChatMessages } = useChat();
+	const { activeChatMessages, updateChatUnreadCount } = useChat();
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 
 	// when you change chats start from bottom otherwise grab where you left off.
@@ -25,16 +27,47 @@ const ActiveChat = () => {
 			chatContainerRef.current.scrollTop =
 				savedScrollPosition.get(activeChatMessages[0].chatId) ||
 				chatContainerRef.current.scrollHeight;
+			if (
+				chatContainerRef.current.scrollHeight ===
+				chatContainerRef.current.clientHeight
+			) {
+				// for small chats where the messages fit within the container and don't scroll. When we view the chat we have viewed all messages
+				updateChatUnreadCount({
+					chatId: activeChatMessages[0].chatId,
+					resetRead: true,
+				});
+			}
 		}
-	}, [activeChatMessages, savedScrollPosition]);
+	}, [activeChatMessages, savedScrollPosition, updateChatUnreadCount]);
 
+	//  save current scroll position if not near the bottom. If at bottom reset chat read count to 0
 	const debounceScroll = useDebouncedCallback(
 		(top: number, chatId: number) => {
-			setSavedScrollPosition((state) => {
-				const updatedState = new Map(state);
-				updatedState.set(chatId, top);
-				return updatedState;
-			});
+			if (chatContainerRef.current) {
+				// <=3 to allow for 3px rounding
+				const bottom =
+					Math.abs(
+						chatContainerRef.current.scrollHeight -
+							top -
+							chatContainerRef.current.clientHeight
+					) <= 3;
+
+				if (bottom) {
+					savedScrollPosition.get(chatId) &&
+						setSavedScrollPosition((state) => {
+							const updatedState = new Map(state);
+							updatedState.delete(chatId);
+							return updatedState;
+						});
+					updateChatUnreadCount({ chatId, resetRead: true });
+				} else {
+					setSavedScrollPosition((state) => {
+						const updatedState = new Map(state);
+						updatedState.set(chatId, top);
+						return updatedState;
+					});
+				}
+			}
 		},
 		500
 	);
@@ -54,7 +87,16 @@ const ActiveChat = () => {
 			onScroll={handleScroll}
 		>
 			{!activeChatMessages ? (
-				<Typography>Loading...</Typography>
+				activeChatMessages === undefined ? (
+					<CircularProgress />
+				) : (
+					<Box className={classes.noActiveChatMessages}>
+						<Typography>
+							Chat does not contain any messages.
+						</Typography>
+						<Typography>Please send a message to begin</Typography>
+					</Box>
+				)
 			) : (
 				activeChatMessages.map((message) => (
 					<Box key={message.id} className={classes.message}>
@@ -63,11 +105,10 @@ const ActiveChat = () => {
 							<AvatarDisplay loggedIn />
 						)}
 						<Box
-							className={`${classes.messagesTextContainer} ${
-								message.senderEmail === loggedInUser?.email
-									? classes.messageContainerRight
-									: ""
-							}`}
+							className={clsx(classes.messagesTextContainer, {
+								[classes.messageContainerRight]:
+									message.senderEmail === loggedInUser?.email,
+							})}
 						>
 							<Typography className={classes.messageMetaData}>
 								{message.user.username}{" "}

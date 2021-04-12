@@ -1,0 +1,18 @@
+import { UserChatUpdateApiData } from "../../interface/UserChats";
+
+// give useability to set the unread number at an arbitrary value, but expect this to be used to reset the message as all values being read
+export default async function updateChatUnreadMessage(
+	chatId: number,
+	unread = 0
+): Promise<UserChatUpdateApiData> {
+	const fetchOptions = {
+		method: "PATCH",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({ unread }),
+	};
+	return await fetch(`/api/chat/${chatId}`, fetchOptions)
+		.then((res) => res.json())
+		.catch(() => ({
+			error: { message: "Unable to connect to server. Please try again" },
+		}));
+}

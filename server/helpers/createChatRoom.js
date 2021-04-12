@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 async function createChatRoom(users) {
 	// create chat room
 	const chat = await db.Chat.create();
-	chat.addUsers([...users]);
+	chat.addUser([...users]);
 	return chat;
 }
 

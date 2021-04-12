@@ -10,13 +10,17 @@ import { searchUsers } from "../../helpers/APICalls/searchUsers";
 interface Props {
 	search: string;
 	handleChange: (event: ChangeEvent<{}>, newInputValue: string) => void;
+	handleSubmit: (
+		event: ChangeEvent<{}>,
+		newInputValue: User | null | string
+	) => void;
 }
-const Search = ({ search, handleChange }: Props) => {
+const Search = ({ search, handleChange, handleSubmit }: Props) => {
 	const [open, setOpen] = useState(false);
 	const [options, setOptions] = useState<User[]>([]);
+	const [loading, setLoading] = useState(false);
 	// limit our call to the api with a debounced value at max of 1 per 0.5 seconds
 	const [debouncedSearch] = useDebounce(search, 500);
-	const loading = open && options.length === 0;
 
 	const classes = useStyles();
 
@@ -29,21 +33,22 @@ const Search = ({ search, handleChange }: Props) => {
 
 		async function searchAndSaveUsers() {
 			// send request to backend API to get users limited to 20.
-			// clean this function up when connected to the backend
+			setLoading(true);
 			const users = await searchUsers({
 				search: debouncedSearch,
 			});
 
-			if (active) {
-				saveOptions(users);
+			if (active && users.otherUsers) {
+				saveOptions(users.otherUsers);
 			}
+			setLoading(false);
 		}
 		searchAndSaveUsers();
 
 		return () => {
 			active = false;
 		};
-	}, [loading, debouncedSearch]);
+	}, [debouncedSearch]);
 
 	// creates a combobox search which is dynamically updated with call's to the API
 	return (
@@ -69,6 +74,9 @@ const Search = ({ search, handleChange }: Props) => {
 				loading={loading}
 				onInputChange={handleChange}
 				inputValue={search}
+				noOptionsText="No Users Found"
+				onChange={handleSubmit}
+				freeSolo
 				renderInput={(params) => (
 					<div className={classes.search}>
 						<InputBase

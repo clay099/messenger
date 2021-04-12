@@ -4,6 +4,18 @@ export interface Message {
 	content: string;
 	senderEmail: string;
 	chatId: number;
-	createdAt: Date;
+	createdAt: string;
 	user: User;
+}
+
+export interface MessageApiData {
+	messages?: Message[];
+	error?: { message: string };
+	// occurs if there are no messages in the chat
+	message?: string;
+}
+
+export interface CreateMessageApiData {
+	createdMessage?: Message;
+	error?: { message: string };
 }

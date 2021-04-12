@@ -18,10 +18,15 @@ module.exports = (sequelize, DataTypes) => {
 			this.belongsToMany(models.Chat, {
 				through: models.UserChat,
 				foreignKey: "userEmail",
+				as: "chat",
 			});
-			this.hasMany(models.UserChat, { foreignKey: "userEmail" });
+			this.hasMany(models.UserChat, {
+				foreignKey: "userEmail",
+				as: "userChat",
+			});
 			this.hasMany(models.Message, {
 				foreignKey: "senderEmail",
+				as: "message",
 			});
 		}
 
@@ -132,7 +137,10 @@ module.exports = (sequelize, DataTypes) => {
 	// only to be used on routes which have auth middleware as that will provide the verification that our user is genuine
 	User.getDetails = async function (email) {
 		try {
-			const user = await this.findOne({ where: { email } });
+			const user = await this.findOne({
+				where: { email },
+				attributes: { exclude: ["password"] },
+			});
 			if (!user) throw new Error("User could not be found");
 			return user;
 		} catch (error) {
