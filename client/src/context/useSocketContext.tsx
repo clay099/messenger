@@ -109,7 +109,6 @@ export const SocketProvider: FunctionComponent = ({ children }) => {
 			});
 
 			// This is only broadcast to users that have a new message with a chat they are involved with. If we receive this it means one of our chats needs to be updated
-			console.log("use effect running");
 			socket.on("new message", ({ message }: SocketNewMessage) => {
 				setUpdatedUserChatLastMessage({ message });
 			});
