@@ -14,7 +14,7 @@ DB_PASSWORD=`your password`
 
 If you would like to use a a separate SQL database please also include DIALECT=`database type` in your .env file. Review the official [sequelize documentation](https://sequelize.org/) for more information
 
-There is a default database of `hatchways-messenger` for use in development environments and a default of `hatchways-messenger-test` for testing environments. It is expected in production environments that the database will be provided from the environment and a default is not set.
+There is a default database of `instant-messenger` for use in development environments and a default of `instant-messenger-test` for testing environments. It is expected in production environments that the database will be provided from the environment and a default is not set.
 
 To insert the tables into your database run `yarn migrate` or `npm run migrate`. Please note your database will need to be setup prior to inserting tables.
 
