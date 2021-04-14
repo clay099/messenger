@@ -1,10 +1,64 @@
-# Express Starter
+# Instant Messenger
 
-This starter repo will be used for building applications using React, Material-UI, React-Router, Node, & Express.js.
+This repository contains a front-end client and backend api to provide an instant messenger application.
 
 ## Getting started
 
-The project is broken down into a client and server folder.
+The project is broken down into a client and server directory.
+
+---
+
+## Client
+
+This directory holds the front-end application which is built out to include:
+
+-   React for front-end library for user interfaces (functional components),
+-   Socket.io for real-time communication with API via WebSockets
+-   React-Router for Client-Side Routing,
+-   Material-UI for pre-built components & styling of the application
+-   Formik & yup for form submission & form validation
+-   TypeScript for strictly typed
+-   Husky & lint-staged to fail fast
+-   Jest & react-testing-library for testing framework & assertions
+
+### Usage
+
+Once the repository is downloaded cd into the `client` directory
+
+Run `yarn install` or `npm install` to install all required packages
+
+To start the project in dev mode use `yarn start` or `npm run start`
+
+To run the test scripts use `yarn test` or `npm run test`
+
+---
+
+## Server
+
+This directory holds the backend api which has been built out to include:
+
+-   Express for flexible Node.js web application framework
+-   Socket.io for real-time communication with front-end via WebSockets
+-   Postgres for relational database management
+-   Sequelize for Node.js ORM used with Postgres
+-   JsonwebToken for signed transfer of authentication information
+-   Cookie-parser for sending authentication data over HTTP-only cookies
+-   Bcrypt for encryption of data in database
+-   Mocha & Chai for test framework & assertions
+
+### Usage
+
+Once the repository is downloaded cd into the `server` directory
+
+The second step is to ensure the Database has been set up and is connected to the project [see Database section](#database) for detailed further information.
+
+Run `yarn install` or `npm install` to install all required packages
+
+To start the project in dev mode use `yarn dev` or `npm run dev`
+
+To start the project in debug mode use `yarn debug` or `npm run debug`
+
+To run the test scripts use `yarn test` or `npm run test`
 
 ### Database
 
