@@ -26,6 +26,23 @@ function authenticateJWT(req, res, next) {
 	}
 }
 
+/**Middleware: Socket Authentication */
+function socketAuth(socket, next) {
+	const token = socket.handshake.auth.token;
+
+	if (socket.handshake.auth && token) {
+		const payload = jwt.verify(token, config.JWT_SECRET_KEY);
+
+		if (!payload) return next(new Error("Authentication error"));
+
+		socket.user = payload;
+		next();
+	} else {
+		next(new Error("Authentication error"));
+	}
+}
+
 module.exports = {
 	authenticateJWT,
+	socketAuth,
 };

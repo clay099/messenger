@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
 	chatSideBanner: {
 		display: "flex",
 		flexDirection: "column",
-		minHeight: "100vh",
+		height: "100vh",
 		padding: "1rem 1rem",
 		width: drawerWidth,
 		[theme.breakpoints.up("md")]: {
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 		fontSize: 20,
 		margin: "1rem 0",
 	},
-	chatSummaryContainer: { overflowY: "auto" },
+	chatSummaryContainer: { overflowY: "auto", marginTop: "1rem" },
 	newChatBtn: {
 		margin: "1rem 0",
 	},

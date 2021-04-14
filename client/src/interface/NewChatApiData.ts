@@ -1,9 +1,14 @@
 import { User } from "./User";
 
-export interface CreatedNewChatApiData {
-	message: string;
+export interface ChatApiData {
 	chat: { id: number; createdAt: Date; updatedAt: Date };
-	otherUser: User;
+	users: User[];
+}
+export interface SentNewChatApiData extends ChatApiData {
+	email: string;
+}
+export interface CreatedNewChatApiData extends ChatApiData {
+	message: string;
 }
 
 export interface NewChatApiData {

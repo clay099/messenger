@@ -2,9 +2,9 @@ import Typography from "@material-ui/core/Typography";
 import useStyles from "./useStyles";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { OnlineBadge } from "../../../components/StyledBadge/StyledBadge";
-import { useChat } from "../../../context/useChatContext";
-import { useAuth } from "../../../context/useAuthContext";
+import { OnlineBadge } from "../../../../components/StyledBadge/StyledBadge";
+import { useChat } from "../../../../context/useChatContext";
+import { useSocket } from "../../../../context/useSocketContext";
 import Grid from "@material-ui/core/Grid";
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 const Header = ({ handleDrawerToggle }: Props) => {
 	const classes = useStyles();
 	const { activeChat } = useChat();
-	const { onlineUsers } = useAuth();
+	const { onlineUsers } = useSocket();
 
 	// once set up with socket.IO update this to be dynamic
 	const onlineStatus =

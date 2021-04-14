@@ -6,7 +6,6 @@ const addToken = require("../helpers/addToken");
 const removeToken = require("../helpers/removeToken");
 const createToken = require("../helpers/createToken");
 const { authenticateJWT } = require("../middleware/auth");
-const onlineUsers = require("../onlineUsers");
 
 /** POST / {email:<string>, password: <string>} => {success: {message: <string>, user: {username: <string>, email: <string>}}} */
 router.post("/login", async function (req, res, next) {
@@ -24,6 +23,7 @@ router.post("/login", async function (req, res, next) {
 			success: {
 				message: "logged in",
 				user: { username: user.username, email: user.email },
+				token,
 			},
 		});
 	} catch (error) {
@@ -46,6 +46,7 @@ router.get(
 				success: {
 					message: "logged in",
 					user: { username: user.username, email: user.email },
+					token: req.cookies.token,
 				},
 			});
 		} catch (error) {
@@ -83,6 +84,7 @@ router.post("/register", async function (req, res, next) {
 			success: {
 				message: "New user created",
 				user: { username: user.username, email: user.email },
+				token,
 			},
 		});
 	} catch (error) {

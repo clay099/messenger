@@ -4,7 +4,7 @@ import Box from "@material-ui/core/Box";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import { UserChat } from "../../interface/UserChats";
 import { useChat } from "../../context/useChatContext";
-import { useAuth } from "../../context/useAuthContext";
+import { useSocket } from "../../context/useSocketContext";
 import clsx from "clsx";
 import UnreadMessages from "../UnReadMessages/UnreadMessages";
 
@@ -16,7 +16,7 @@ interface Props {
 const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 	const classes = useStyles();
 	const { selectActiveChat } = useChat();
-	const { onlineUsers } = useAuth();
+	const { onlineUsers } = useSocket();
 
 	const handleClick = () => {
 		selectActiveChat(chat);
