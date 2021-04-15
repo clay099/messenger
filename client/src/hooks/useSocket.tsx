@@ -63,64 +63,154 @@ export const useSocket = ({
 					withCredentials: true,
 				})
 			);
-		} else if (socket && loggedInUser) {
-			socket.on("disconnect", () => {
-				updateSnackBarMessage(
-					"You have been disconnected from instant messages. We are trying to re-connect you."
-				);
-				setOnlineUsers(undefined);
-			});
+		}
+	}, [socket]);
 
-			socket.on("reconnect", () => {
-				updateSnackBarMessage(
-					"You have been reconnected to instant messages."
-				);
-				socket.emit(
-					"reconnect",
-					({ onlineUsers }: SocketConnection) => {
-						setOnlineUsers(new Set(onlineUsers));
-					}
-				);
-			});
+	useEffect(() => {
+		const disconnectCallback = () => {
+			updateSnackBarMessage(
+				"You have been disconnected from instant messages. We are trying to re-connect you."
+			);
+			setOnlineUsers(undefined);
+		};
 
-			socket.on("user joined", ({ onlineUsers }: SocketConnection) => {
+		if (socket) {
+			socket.on("disconnect", disconnectCallback);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("disconnect", disconnectCallback);
+			}
+		};
+	}, [socket, updateSnackBarMessage]);
+
+	useEffect(() => {
+		const reconnectCallback = (socket: Socket) => {
+			updateSnackBarMessage(
+				"You have been reconnected to instant messages."
+			);
+			socket.emit("reconnect", ({ onlineUsers }: SocketConnection) => {
 				setOnlineUsers(new Set(onlineUsers));
 			});
+		};
 
-			socket.on("reconnect_error", () => {
-				updateSnackBarMessage("Attempt to reconnect has failed.");
-			});
+		if (socket) {
+			socket.on("reconnect", () => reconnectCallback(socket));
+		}
 
-			socket.on("user left", ({ onlineUsers }: SocketConnection) => {
-				setOnlineUsers(new Set(onlineUsers));
-			});
+		return () => {
+			if (socket) {
+				socket.off("reconnect", () => reconnectCallback(socket));
+			}
+		};
+	}, [socket, updateSnackBarMessage]);
 
-			// This is only broadcast to users that have a new message with a chat they are involved with. If we receive this it means one of our chats needs to be updated
-			socket.on("new message", ({ message }: SocketNewMessage) => {
-				handleNewSocketMessage(message);
-			});
+	useEffect(() => {
+		const userJoinedCallback = ({ onlineUsers }: SocketConnection) => {
+			setOnlineUsers(new Set(onlineUsers));
+		};
 
+		if (socket) {
+			socket.on("user joined", userJoinedCallback);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("user joined", userJoinedCallback);
+			}
+		};
+	}, [socket]);
+
+	useEffect(() => {
+		const reconnectErrorCallback = () => {
+			updateSnackBarMessage("Attempt to reconnect has failed.");
+		};
+
+		if (socket) {
+			socket.on("reconnect_error", reconnectErrorCallback);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("reconnect_error", reconnectErrorCallback);
+			}
+		};
+	}, [socket, updateSnackBarMessage]);
+
+	useEffect(() => {
+		const userLeftCallback = ({ onlineUsers }: SocketConnection) => {
+			setOnlineUsers(new Set(onlineUsers));
+		};
+
+		if (socket) {
+			socket.on("user left", userLeftCallback);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("user left", userLeftCallback);
+			}
+		};
+	}, [socket]);
+
+	useEffect(() => {
+		const connectionErrorCallback = (err: Error) => {
+			updateSnackBarMessage(err.message);
+		};
+
+		if (socket) {
 			// handle errors especially  middleware error
-			socket.on("connect_error", (err) => {
-				updateSnackBarMessage(err.message);
-			});
+			socket.on("connect_error", connectionErrorCallback);
+		}
 
-			// if you are logged in and you create a new chat or another party creates a chat with you. Save that chat data to avoid a logged in user trying to create a new room which already exists and receiving an error message
-			socket.on("new chat", ({ chat, users }: SentNewChatApiData) => {
-				// save the data
+		return () => {
+			if (socket) {
+				socket.off("connect_error", connectionErrorCallback);
+			}
+		};
+	}, [socket, updateSnackBarMessage]);
+
+	useEffect(() => {
+		const newMessageCallback = ({ message }: SocketNewMessage) => {
+			handleNewSocketMessage(message);
+		};
+
+		if (socket) {
+			// This is only broadcast to users that have a new message with a chat they are involved with. If we receive this it means one of our chats needs to be updated
+			socket.on("new message", newMessageCallback);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("new message", newMessageCallback);
+			}
+		};
+	}, [socket, handleNewSocketMessage]);
+
+	useEffect(() => {
+		const newChatCallback = ({ chat, users }: SentNewChatApiData) => {
+			// save the data
+			if (loggedInUser) {
 				const userChatData = newApiChatDataToUserChat({
 					data: { chat, users },
 					loggedInUserEmail: loggedInUser.email,
 				});
 				handleNewChat(userChatData);
-			});
+			}
+		};
+
+		if (socket) {
+			// if you are logged in and you create a new chat or another party creates a chat with you. Save that chat data to avoid a logged in user trying to create a new room which already exists and receiving an error message
+			socket.on("new chat", newChatCallback);
 		}
-	}, [
-		socket,
-		handleNewChat,
-		handleNewSocketMessage,
-		loggedInUser,
-		updateSnackBarMessage,
-	]);
+
+		return () => {
+			if (socket) {
+				socket.off("new chat", newChatCallback);
+			}
+		};
+	}, [socket, loggedInUser, handleNewChat]);
+
 	return { onlineUsers };
 };
