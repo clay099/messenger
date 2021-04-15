@@ -164,7 +164,6 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 
 	// create a new userChat when received via socket. If you created the chat (see above function) you will set that chat as the active chat.
 	const handleNewChat = useCallback((newUserChat: UserChat) => {
-		console.log("running handleNew Chat function");
 		setUserChats((state) => {
 			if (!state) return [newUserChat];
 			// new chat will appear at top of list
