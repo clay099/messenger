@@ -15,26 +15,22 @@ interface IAuthContext {
 	loggedInUser: User | null | undefined;
 	updateLoginContext: (data: AuthApiDataSuccess) => void;
 	logout: () => void;
-	socketToken: string | null;
 }
 
 export const AuthContext = createContext<IAuthContext>({
 	loggedInUser: undefined,
 	updateLoginContext: () => null,
 	logout: () => null,
-	socketToken: null,
 });
 
 export const AuthProvider: FunctionComponent = ({ children }) => {
 	// default undefined before loading, once loaded provide user or null if logged out
 	const [loggedInUser, setLoggedInUser] = useState<User | null | undefined>();
-	const [socketToken, setSocketToken] = useState<string | null>(null);
 	const history = useHistory();
 
 	const updateLoginContext = useCallback(
 		(data: AuthApiDataSuccess) => {
 			setLoggedInUser(data.user);
-			setSocketToken(data.token);
 			history.push("/dashboard");
 		},
 		[history]
@@ -46,7 +42,6 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 			.then(() => {
 				history.push("/login");
 				setLoggedInUser(null);
-				setSocketToken(null);
 			})
 			.catch((error) => console.error(error));
 	}, [history]);
@@ -70,7 +65,7 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ loggedInUser, updateLoginContext, logout, socketToken }}
+			value={{ loggedInUser, updateLoginContext, logout }}
 		>
 			{children}
 		</AuthContext.Provider>

@@ -23,7 +23,7 @@ export const useSocket = ({
 	const [socket, setSocket] = useState<Socket | null>(null);
 
 	const { updateSnackBarMessage } = useSnackBar();
-	const { loggedInUser, socketToken } = useAuth();
+	const { loggedInUser } = useAuth();
 
 	useEffect(() => {
 		if (socket) {
@@ -57,13 +57,13 @@ export const useSocket = ({
 	}, [userChats, handleJoinChatRooms]);
 
 	useEffect(() => {
-		if (!socket && socketToken && process.env.REACT_APP_API_URL) {
+		if (!socket && process.env.REACT_APP_API_URL) {
 			setSocket(
 				io(process.env.REACT_APP_API_URL, {
-					auth: { token: socketToken },
+					withCredentials: true,
 				})
 			);
-		} else if (socket) {
+		} else if (socket && loggedInUser) {
 			socket.on("disconnect", () => {
 				updateSnackBarMessage(
 					"You have been disconnected from instant messages. We are trying to re-connect you."
@@ -100,21 +100,23 @@ export const useSocket = ({
 				handleNewSocketMessage(message);
 			});
 
-			// if you are logged in (should be the case unless this provider is used outside Dashboard Component) and you create a new chat or another party creates a chat with you. Save that chat data to avoid a logged in user trying to create a new room which already exists and receiving an error message
-			if (loggedInUser) {
-				socket.on("new chat", ({ chat, users }: SentNewChatApiData) => {
-					// save the data
-					const userChatData = newApiChatDataToUserChat({
-						data: { chat, users },
-						loggedInUserEmail: loggedInUser.email,
-					});
-					handleNewChat(userChatData);
+			// handle errors especially  middleware error
+			socket.on("connect_error", (err) => {
+				updateSnackBarMessage(err.message);
+			});
+
+			// if you are logged in and you create a new chat or another party creates a chat with you. Save that chat data to avoid a logged in user trying to create a new room which already exists and receiving an error message
+			socket.on("new chat", ({ chat, users }: SentNewChatApiData) => {
+				// save the data
+				const userChatData = newApiChatDataToUserChat({
+					data: { chat, users },
+					loggedInUserEmail: loggedInUser.email,
 				});
-			}
+				handleNewChat(userChatData);
+			});
 		}
 	}, [
 		socket,
-		socketToken,
 		handleNewChat,
 		handleNewSocketMessage,
 		loggedInUser,

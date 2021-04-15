@@ -23,7 +23,6 @@ router.post("/login", async function (req, res, next) {
 			success: {
 				message: "logged in",
 				user: { username: user.username, email: user.email },
-				token,
 			},
 		});
 	} catch (error) {
@@ -84,7 +83,6 @@ router.post("/register", async function (req, res, next) {
 			success: {
 				message: "New user created",
 				user: { username: user.username, email: user.email },
-				token,
 			},
 		});
 	} catch (error) {

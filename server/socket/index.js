@@ -1,4 +1,5 @@
 const corsOptions = require("../helpers/corsOptions");
+const cookieParser = require("cookie-parser");
 
 const io = require("socket.io")({ cors: corsOptions });
 
@@ -11,9 +12,13 @@ const onConnection = (socket) => {
 	registerSocketChatRooms(io, socket);
 };
 
-const { socketAuth } = require("../middleware/auth");
+const wrap = (middleware) => (socket, next) =>
+	middleware(socket.request, {}, next);
 
-io.use(socketAuth);
+const { authenticateJWT } = require("../middleware/auth");
+
+io.use(wrap(cookieParser()));
+io.use(wrap(authenticateJWT));
 io.on("connection", onConnection);
 
 module.exports = io;
