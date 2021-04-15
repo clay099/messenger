@@ -3,7 +3,7 @@ import AvatarDisplay from "./AvatarDisplay";
 
 describe("AvatarDisplay tests", () => {
 	test("smoke test", () => {
-		render(<AvatarDisplay loggedIn />);
+		render(<AvatarDisplay loggedIn user={} />);
 	});
 
 	test("loading snapshot test", () => {

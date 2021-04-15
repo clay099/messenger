@@ -61,7 +61,7 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 	return (
 		<Grid className={classes.chatSideBanner}>
 			<Box className={classes.userPanel}>
-				<AvatarDisplay loggedIn />
+				<AvatarDisplay loggedIn user={loggedInUser} />
 				<Typography className={classes.userText} variant="h5">
 					{loggedInUser.username}
 				</Typography>

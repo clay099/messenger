@@ -31,7 +31,7 @@ const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 	return (
 		<Box className={classes.chatContainer} onClick={handleClick}>
 			{/* user needs to add profile image */}
-			<AvatarDisplay loggedIn={loggedIn} />
+			<AvatarDisplay loggedIn={loggedIn} user={chat.user} />
 			<Box className={classes.chatTextContainer}>
 				<Typography className={classes.chatUser} variant="h5">
 					{chat.user.username}

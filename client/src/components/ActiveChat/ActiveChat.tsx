@@ -1,14 +1,11 @@
 import { useLayoutEffect, useRef, useState, UIEvent } from "react";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import { useChat } from "../../context/useChatContext";
-import { useAuth } from "../../context/useAuthContext";
-import { dateToTime } from "../../helpers/dateToTime";
 import useStyles from "./useStyles";
 import { useDebouncedCallback } from "use-debounce";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import clsx from "clsx";
+import ActiveChatMessage from "./ActiveChatMessage/ActiveChatMessage";
 
 const ActiveChat = () => {
 	const classes = useStyles();
@@ -17,7 +14,6 @@ const ActiveChat = () => {
 		new Map<number, number>()
 	);
 
-	const { loggedInUser } = useAuth();
 	const { activeChatMessages, updateChatUnreadCount } = useChat();
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -99,32 +95,7 @@ const ActiveChat = () => {
 				)
 			) : (
 				activeChatMessages.map((message) => (
-					<Box key={message.id} className={classes.message}>
-						{message.senderEmail !== loggedInUser?.email && (
-							// once socket.io is connected update loggedIn to be dynamic also need a image to be dynamic
-							<AvatarDisplay loggedIn />
-						)}
-						<Box
-							className={clsx(classes.messagesTextContainer, {
-								[classes.messageContainerRight]:
-									message.senderEmail === loggedInUser?.email,
-							})}
-						>
-							<Typography className={classes.messageMetaData}>
-								{message.user.username}{" "}
-								<i>{dateToTime(message.createdAt)}</i>
-							</Typography>
-							<Typography
-								className={`${classes.messageText} ${
-									message.senderEmail === loggedInUser?.email
-										? classes.messageRight
-										: classes.messageLeft
-								}`}
-							>
-								{message.content}
-							</Typography>
-						</Box>
-					</Box>
+					<ActiveChatMessage key={message.id} message={message} />
 				))
 			)}
 		</div>
