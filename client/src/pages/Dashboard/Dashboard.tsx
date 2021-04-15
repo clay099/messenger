@@ -10,7 +10,6 @@ import { useAuth } from "../../context/useAuthContext";
 import { useHistory } from "react-router-dom";
 import ChatSideBanner from "../../components/ChatSideBanner/ChatSideBanner";
 import { ChatProvider } from "../../context/useChatContext";
-import { SocketProvider } from "../../context/useSocketContext";
 import DashboardMain from "./DashboardMain/DashboardMain";
 
 export default function Dashboard() {
@@ -37,42 +36,40 @@ export default function Dashboard() {
 	}
 
 	return (
-		<SocketProvider>
-			<ChatProvider>
-				<Grid
-					container
-					component="main"
-					className={`${classes.root} ${classes.dashboard}`}
-				>
-					<CssBaseline />
-					<Grid item className={classes.drawerWrapper}>
-						{drawerSmUp ? (
-							<Drawer variant="permanent" open>
-								<ChatSideBanner loggedInUser={loggedInUser} />
-							</Drawer>
-						) : (
-							<Drawer
-								variant="temporary"
-								anchor="left"
-								open={drawerOpen}
-								onClose={handleDrawerToggle}
-								ModalProps={{
-									keepMounted: true, // Better open performance on mobile.
-								}}
-							>
-								<ChatSideBanner
-									loggedInUser={loggedInUser}
-									handleDrawerToggle={handleDrawerToggle}
-								/>
-							</Drawer>
-						)}
-					</Grid>
-					<DashboardMain
-						loggedInUser={loggedInUser}
-						handleDrawerToggle={handleDrawerToggle}
-					/>
+		<ChatProvider>
+			<Grid
+				container
+				component="main"
+				className={`${classes.root} ${classes.dashboard}`}
+			>
+				<CssBaseline />
+				<Grid item className={classes.drawerWrapper}>
+					{drawerSmUp ? (
+						<Drawer variant="permanent" open>
+							<ChatSideBanner loggedInUser={loggedInUser} />
+						</Drawer>
+					) : (
+						<Drawer
+							variant="temporary"
+							anchor="left"
+							open={drawerOpen}
+							onClose={handleDrawerToggle}
+							ModalProps={{
+								keepMounted: true, // Better open performance on mobile.
+							}}
+						>
+							<ChatSideBanner
+								loggedInUser={loggedInUser}
+								handleDrawerToggle={handleDrawerToggle}
+							/>
+						</Drawer>
+					)}
 				</Grid>
-			</ChatProvider>
-		</SocketProvider>
+				<DashboardMain
+					loggedInUser={loggedInUser}
+					handleDrawerToggle={handleDrawerToggle}
+				/>
+			</Grid>
+		</ChatProvider>
 	);
 }

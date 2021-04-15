@@ -2,7 +2,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import AvatarDisplay from "../../AvatarDisplay/AvatarDisplay";
 import { useAuth } from "../../../context/useAuthContext";
-import { useSocket } from "../../../context/useSocketContext";
+import { useChat } from "../../../context/useChatContext";
 import { dateToTime } from "../../../helpers/dateToTime";
 import useStyles from "./useStyles";
 import clsx from "clsx";
@@ -16,7 +16,7 @@ const ActiveChatMessage = ({ message }: Props) => {
 	const classes = useStyles();
 
 	const { loggedInUser } = useAuth();
-	const { onlineUsers } = useSocket();
+	const { onlineUsers } = useChat();
 
 	const loggedIn =
 		onlineUsers && onlineUsers.has(message.senderEmail) ? true : false;

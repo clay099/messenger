@@ -15,7 +15,7 @@ import submitMessage from "../helpers/APICalls/submitMessage";
 import updateChatUnreadMessage from "../helpers/APICalls/updateChatUnreadMessage";
 import { newApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
 import { useSnackBar } from "./useSnackbarContext";
-import { useSocket } from "./useSocketContext";
+import { useSocket } from "../hooks/useSocket";
 import { useAuth } from "./useAuthContext";
 
 interface UpdateChatUnreadCountProps {
@@ -33,6 +33,7 @@ interface IChatContext {
 		chatId,
 		resetRead,
 	}: UpdateChatUnreadCountProps) => void;
+	onlineUsers: Set<string> | undefined;
 }
 
 export const ChatContext = createContext<IChatContext>({
@@ -43,6 +44,7 @@ export const ChatContext = createContext<IChatContext>({
 	createNewChat: () => null,
 	handleNewMessageSubmission: () => null,
 	updateChatUnreadCount: () => null,
+	onlineUsers: undefined,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
@@ -56,14 +58,6 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 
 	const { updateSnackBarMessage } = useSnackBar();
 	const { loggedInUser } = useAuth();
-
-	const {
-		joinChatRooms,
-		updatedUserChatLastMessage,
-		resetUpdatedUserChatLastMessage,
-		newUserChat,
-		resetNewUserChat,
-	} = useSocket();
 
 	const selectActiveChat = useCallback(async (chat: UserChat) => {
 		setUserChats((state) => {
@@ -169,21 +163,13 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	);
 
 	// create a new userChat when received via socket. If you created the chat (see above function) you will set that chat as the active chat.
-	useEffect(() => {
-		if (newUserChat) {
-			setUserChats((state) => {
-				if (!state) return [newUserChat];
-				// new chat will appear at top of list
-				return [newUserChat, ...state];
-			});
-			resetNewUserChat();
-		}
-	}, [newUserChat, resetNewUserChat]);
-
-	// join socket chat rooms
-	useEffect(() => {
-		userChats && joinChatRooms(userChats);
-	}, [joinChatRooms, userChats]);
+	const handleNewChat = useCallback((newUserChat: UserChat) => {
+		setUserChats((state) => {
+			if (!state) return [newUserChat];
+			// new chat will appear at top of list
+			return [newUserChat, ...state];
+		});
+	}, []);
 
 	// submit a new message to the API
 	const handleNewMessageSubmission = useCallback(
@@ -208,9 +194,8 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	);
 
 	// when sockets receive a new message save the data for relevant chat context so the user can display & reset the socketContext state to be ready to receive a new message
-	useEffect(() => {
-		if (updatedUserChatLastMessage) {
-			const newMessage = updatedUserChatLastMessage.message;
+	const handleNewSocketMessage = useCallback(
+		(newMessage: Message) => {
 			setUserChats((userChatState) => {
 				if (!userChatState) return null;
 				return userChatState.map((userChat) => {
@@ -242,14 +227,15 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 					};
 				});
 			}
-			// now that we have saved the message data reset the stat back to default until a new message is sent. This also allow us to change active chat and now bring unrelated messages to that chat
-			resetUpdatedUserChatLastMessage();
-		}
-	}, [
-		updatedUserChatLastMessage,
-		resetUpdatedUserChatLastMessage,
-		activeChat?.chatId,
-	]);
+		},
+		[activeChat?.chatId]
+	);
+
+	const { onlineUsers } = useSocket({
+		handleNewChat,
+		userChats,
+		handleNewSocketMessage,
+	});
 
 	// get active chat messages from API
 	useEffect(() => {
@@ -313,6 +299,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				createNewChat,
 				handleNewMessageSubmission,
 				updateChatUnreadCount,
+				onlineUsers,
 			}}
 		>
 			{children}
