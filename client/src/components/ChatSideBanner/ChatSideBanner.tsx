@@ -61,7 +61,7 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 	return (
 		<Grid className={classes.chatSideBanner}>
 			<Box className={classes.userPanel}>
-				<AvatarDisplay loggedIn />
+				<AvatarDisplay loggedIn user={loggedInUser} />
 				<Typography className={classes.userText} variant="h5">
 					{loggedInUser.username}
 				</Typography>
@@ -76,36 +76,36 @@ const ChatSideBanner = ({ loggedInUser, handleDrawerToggle }: Props) => {
 					handleChange={handleChange}
 					handleSubmit={handleSearchSubmit}
 				/>
-				<Box className={classes.chatSummaryContainer}>
-					{!displayChat ? (
-						<CircularProgress />
-					) : displayChat.length === 0 ? (
-						newChatUser ? (
-							<Button
-								fullWidth
-								variant="contained"
-								color="primary"
-								onClick={handleNewChat}
-								className={classes.newChatBtn}
-							>
-								{`New Chat with ${newChatUser.username}`}
-							</Button>
-						) : (
-							<Box className={classes.noChatToSelectText}>
-								<Typography>No Chats Found</Typography>
-								<Typography>Search For Other Users</Typography>
-							</Box>
-						)
+			</Box>
+			<Box className={classes.chatSummaryContainer}>
+				{!displayChat ? (
+					<CircularProgress />
+				) : displayChat.length === 0 ? (
+					newChatUser ? (
+						<Button
+							fullWidth
+							variant="contained"
+							color="primary"
+							onClick={handleNewChat}
+							className={classes.newChatBtn}
+						>
+							{`New Chat with ${newChatUser.username}`}
+						</Button>
 					) : (
-						displayChat.map((chat) => (
-							<ChatSummary
-								key={chat.chatId}
-								chat={chat}
-								handleDrawerToggle={handleDrawerToggle}
-							/>
-						))
-					)}
-				</Box>
+						<Box className={classes.noChatToSelectText}>
+							<Typography>No Chats Found</Typography>
+							<Typography>Search For Other Users</Typography>
+						</Box>
+					)
+				) : (
+					displayChat.map((chat) => (
+						<ChatSummary
+							key={chat.chatId}
+							chat={chat}
+							handleDrawerToggle={handleDrawerToggle}
+						/>
+					))
+				)}
 			</Box>
 		</Grid>
 	);

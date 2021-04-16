@@ -15,48 +15,36 @@ interface IAuthContext {
 	loggedInUser: User | null | undefined;
 	updateLoginContext: (data: AuthApiDataSuccess) => void;
 	logout: () => void;
-	onlineUsers: Set<string> | undefined;
 }
 
 export const AuthContext = createContext<IAuthContext>({
 	loggedInUser: undefined,
 	updateLoginContext: () => null,
 	logout: () => null,
-	onlineUsers: undefined,
 });
 
 export const AuthProvider: FunctionComponent = ({ children }) => {
 	// default undefined before loading, once loaded provide user or null if logged out
 	const [loggedInUser, setLoggedInUser] = useState<User | null | undefined>();
-	//TODO: when socket IO is connected add function to remove users when advised by connection
-	const [onlineUsers, setOnlineUsers] = useState<Set<string> | undefined>();
 	const history = useHistory();
 
 	const updateLoginContext = useCallback(
 		(data: AuthApiDataSuccess) => {
 			setLoggedInUser(data.user);
-			setOnlineUsers((state) => {
-				if (!state) {
-					return new Set(data.onlineUsers);
-				} else {
-					return new Set([...state, ...data.onlineUsers]);
-				}
-			});
 			history.push("/dashboard");
 		},
 		[history]
 	);
 
-	const logout = async () => {
+	const logout = useCallback(async () => {
 		// needed to remove token cookie
 		await fetch("/logout")
 			.then(() => {
 				history.push("/login");
 				setLoggedInUser(null);
-				setOnlineUsers(undefined);
 			})
 			.catch((error) => console.error(error));
-	};
+	}, [history]);
 
 	// use our cookies to check if we can login straight away
 	useEffect(() => {
@@ -64,6 +52,7 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 			await loginWithCookies().then((data: AuthApiData) => {
 				if (data.success) {
 					updateLoginContext(data.success);
+					history.push("/dashboard");
 				} else {
 					// don't need to provide error feedback as this just means user doesn't have saved cookies or the cookies have not been authenticated on the backend
 					setLoggedInUser(null);
@@ -76,7 +65,7 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ loggedInUser, updateLoginContext, logout, onlineUsers }}
+			value={{ loggedInUser, updateLoginContext, logout }}
 		>
 			{children}
 		</AuthContext.Provider>

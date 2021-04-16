@@ -4,7 +4,6 @@ import Box from "@material-ui/core/Box";
 import AvatarDisplay from "../AvatarDisplay/AvatarDisplay";
 import { UserChat } from "../../interface/UserChats";
 import { useChat } from "../../context/useChatContext";
-import { useAuth } from "../../context/useAuthContext";
 import clsx from "clsx";
 import UnreadMessages from "../UnReadMessages/UnreadMessages";
 
@@ -15,8 +14,7 @@ interface Props {
 
 const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 	const classes = useStyles();
-	const { selectActiveChat } = useChat();
-	const { onlineUsers } = useAuth();
+	const { selectActiveChat, onlineUsers } = useChat();
 
 	const handleClick = () => {
 		selectActiveChat(chat);
@@ -31,7 +29,7 @@ const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 	return (
 		<Box className={classes.chatContainer} onClick={handleClick}>
 			{/* user needs to add profile image */}
-			<AvatarDisplay loggedIn={loggedIn} />
+			<AvatarDisplay loggedIn={loggedIn} user={chat.user} />
 			<Box className={classes.chatTextContainer}>
 				<Typography className={classes.chatUser} variant="h5">
 					{chat.user.username}

@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { AuthContext } from "../context/useAuthContext";
-import { mockLoggedInUser, mockOtherUsers } from "./mockUser";
+import { mockLoggedInUser } from "./mockUser";
 
 const MockUseAuthProvider: FunctionComponent = ({ children }) => {
 	return (
@@ -9,10 +9,6 @@ const MockUseAuthProvider: FunctionComponent = ({ children }) => {
 				loggedInUser: mockLoggedInUser,
 				updateLoginContext: jest.fn(),
 				logout: jest.fn(),
-				onlineUsers: new Set([
-					mockOtherUsers[0].email,
-					mockOtherUsers[1].email,
-				]),
 			}}
 		>
 			{children}

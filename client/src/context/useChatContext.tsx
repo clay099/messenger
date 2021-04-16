@@ -13,8 +13,10 @@ import { getChats } from "../helpers/APICalls/getChats";
 import { createChat } from "../helpers/APICalls/createChat";
 import submitMessage from "../helpers/APICalls/submitMessage";
 import updateChatUnreadMessage from "../helpers/APICalls/updateChatUnreadMessage";
-import { createdApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
+import { newApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
 import { useSnackBar } from "./useSnackbarContext";
+import { useSocket } from "../hooks/useSocket";
+import { useAuth } from "./useAuthContext";
 
 interface UpdateChatUnreadCountProps {
 	chatId: number;
@@ -26,11 +28,12 @@ interface IChatContext {
 	activeChatMessages: Message[] | null | undefined;
 	userChats: UserChat[] | null;
 	createNewChat: (email: string) => void;
-	handleNewMessage: (message: string, callback: () => void) => void;
+	handleNewMessageSubmission: (message: string, callback: () => void) => void;
 	updateChatUnreadCount: ({
 		chatId,
 		resetRead,
 	}: UpdateChatUnreadCountProps) => void;
+	onlineUsers: Set<string> | undefined;
 }
 
 export const ChatContext = createContext<IChatContext>({
@@ -39,8 +42,9 @@ export const ChatContext = createContext<IChatContext>({
 	activeChatMessages: undefined,
 	userChats: null,
 	createNewChat: () => null,
-	handleNewMessage: () => null,
+	handleNewMessageSubmission: () => null,
 	updateChatUnreadCount: () => null,
+	onlineUsers: undefined,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
@@ -53,6 +57,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	const [userChats, setUserChats] = useState<UserChat[] | null>(null);
 
 	const { updateSnackBarMessage } = useSnackBar();
+	const { loggedInUser } = useAuth();
 
 	const selectActiveChat = useCallback(async (chat: UserChat) => {
 		setUserChats((state) => {
@@ -81,11 +86,11 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 	}, []);
 
 	const removeUserChats = useCallback(() => {
-		setUserChats(null);
+		setUserChats([]);
 		setActiveChat(null);
-		setUserChats(null);
 	}, []);
 
+	// updates the unread count state & if all messages are read advise the API.
 	const updateChatUnreadCount = useCallback(
 		async ({ chatId, resetRead }: UpdateChatUnreadCountProps) => {
 			if (resetRead && activeChat && activeChat.unread !== 0) {
@@ -110,7 +115,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 					}
 				});
 			} else if (!resetRead) {
-				// only run this if we are incrementing the unread message count. No need to update API as it will increment based on the message being sent
+				// this only runs if we are incrementing the unread message count. No need to update API as it will increment based on the message being sent
 				setUserChats((userChats) => {
 					if (!userChats) return null;
 					return userChats.map((userChat) => {
@@ -129,21 +134,20 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		[activeChat, updateSnackBarMessage]
 	);
 
+	// create a new chat with the API & set that chat as active
 	const createNewChat = useCallback(
 		(email: string) => {
-			if (email) {
+			if (email && loggedInUser) {
 				createChat({ email }).then((data) => {
 					if (data.created) {
 						removeChatMessages();
 						// create new userChat object
-						const newUserChat = createdApiChatDataToUserChat(
-							data.created
-						);
-						setActiveChat(newUserChat);
-						setUserChats((state) => {
-							if (!state) return [newUserChat];
-							return [...state, newUserChat];
+						const newUserChat = newApiChatDataToUserChat({
+							data: data.created,
+							loggedInUserEmail: loggedInUser.email,
 						});
+						setActiveChat(newUserChat);
+						// socket is now responsible for saving the chat into UserChat state
 					} else if (data.error) {
 						updateSnackBarMessage(data.error.message);
 					} else {
@@ -155,35 +159,25 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				});
 			}
 		},
-		[removeChatMessages, updateSnackBarMessage]
+		[removeChatMessages, updateSnackBarMessage, loggedInUser]
 	);
 
-	const handleNewMessage = useCallback(
+	// create a new userChat when received via socket. If you created the chat (see above function) you will set that chat as the active chat.
+	const handleNewChat = useCallback((newUserChat: UserChat) => {
+		setUserChats((state) => {
+			if (!state) return [newUserChat];
+			// new chat will appear at top of list
+			return [newUserChat, ...state];
+		});
+	}, []);
+
+	// submit a new message to the API
+	const handleNewMessageSubmission = useCallback(
 		async (message: string, resetForm: () => void) => {
 			if (activeChat) {
 				submitMessage(activeChat.chatId, message).then((data) => {
 					if (data.createdMessage) {
-						const newMessage = data.createdMessage;
-						setActiveChatMessages((activeChatState) => {
-							if (activeChatState) {
-								return [...activeChatState, newMessage];
-							} else {
-								return [newMessage];
-							}
-						});
-						setUserChats((userChatState) => {
-							if (!userChatState) return null;
-							return userChatState.map((userChat) => {
-								if (newMessage.chatId !== userChat.chatId) {
-									return userChat;
-								} else {
-									return {
-										...userChat,
-										lastMessage: newMessage.content,
-									};
-								}
-							});
-						});
+						// this logic now handled by sockets & the below useEffect
 					} else if (data.error) {
 						updateSnackBarMessage(data.error.message);
 					} else {
@@ -199,7 +193,51 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		[activeChat, updateSnackBarMessage]
 	);
 
-	// get active chat messages
+	// when sockets receive a new message save the data for relevant chat context so the user can display & reset the socketContext state to be ready to receive a new message
+	const handleNewSocketMessage = useCallback(
+		(newMessage: Message) => {
+			setUserChats((userChatState) => {
+				if (!userChatState) return null;
+				return userChatState.map((userChat) => {
+					if (newMessage.chatId !== userChat.chatId) {
+						return userChat;
+					} else {
+						return {
+							...userChat,
+							lastMessage: newMessage.content,
+							unread: userChat.unread + 1,
+						};
+					}
+				});
+			});
+			if (activeChat?.chatId === newMessage.chatId) {
+				setActiveChatMessages((activeChatMessagesState) => {
+					if (activeChatMessagesState) {
+						return [...activeChatMessagesState, newMessage];
+					} else {
+						return [newMessage];
+					}
+				});
+				setActiveChat((activeChatState) => {
+					if (!activeChatState) return activeChatState;
+					return {
+						...activeChatState,
+						lastMessage: newMessage.content,
+						unread: activeChatState.unread + 1,
+					};
+				});
+			}
+		},
+		[activeChat?.chatId]
+	);
+
+	const { onlineUsers } = useSocket({
+		handleNewChat,
+		userChats,
+		handleNewSocketMessage,
+	});
+
+	// get active chat messages from API
 	useEffect(() => {
 		if (
 			activeChat &&
@@ -259,8 +297,9 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				selectActiveChat,
 				userChats,
 				createNewChat,
-				handleNewMessage,
+				handleNewMessageSubmission,
 				updateChatUnreadCount,
+				onlineUsers,
 			}}
 		>
 			{children}

@@ -6,7 +6,6 @@ import Signup from "./pages/SignUp/SignUp";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import { AuthProvider } from "./context/useAuthContext";
 import { SnackBarProvider } from "./context/useSnackbarContext";
-import { ChatProvider } from "./context/useChatContext";
 
 import "./App.css";
 
@@ -20,9 +19,7 @@ function App() {
 							<Route exact path="/login" component={Login} />
 							<Route exact path="/signup" component={Signup} />
 							<Route exact path="/dashboard">
-								<ChatProvider>
-									<Dashboard />
-								</ChatProvider>
+								<Dashboard />
 							</Route>
 							<Route path="*">
 								<Redirect to="/login" />

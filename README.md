@@ -27,6 +27,8 @@ Once the repository is downloaded cd into the `client` directory
 
 Run `yarn install` or `npm install` to install all required packages
 
+In order to get the sockets to work add an environment variable called "REACT_APP_API_URL". This variable should correspond with the backend API address.
+
 To start the project in dev mode use `yarn start` or `npm run start`
 
 To run the test scripts use `yarn test` or `npm run test`

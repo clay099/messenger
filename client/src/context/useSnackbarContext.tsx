@@ -4,6 +4,7 @@ import {
 	createContext,
 	FunctionComponent,
 	SyntheticEvent,
+	useCallback,
 } from "react";
 import Snackbar, { SnackbarCloseReason } from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -21,22 +22,22 @@ export const SnackBarProvider: FunctionComponent = ({ children }) => {
 	const [message, setMessage] = useState<string | null>(null);
 	const [open, setOpen] = useState<boolean>(false);
 
-	const updateSnackBarMessage = (message: string) => {
+	const updateSnackBarMessage = useCallback((message: string) => {
 		setMessage(message);
 		setOpen(true);
-	};
+	}, []);
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		setOpen(false);
-	};
+	}, []);
 
-	const snackbarHandleClose = (
-		event: SyntheticEvent,
-		reason: SnackbarCloseReason
-	) => {
-		if (reason === "clickaway") return;
-		setOpen(false);
-	};
+	const snackbarHandleClose = useCallback(
+		(event: SyntheticEvent, reason: SnackbarCloseReason) => {
+			if (reason === "clickaway") return;
+			setOpen(false);
+		},
+		[]
+	);
 
 	return (
 		<SnackBarContext.Provider value={{ updateSnackBarMessage }}>
