@@ -15,6 +15,7 @@ const MockUseChatProvider: FunctionComponent = ({ children }) => {
 				handleNewMessageSubmission: jest.fn(),
 				updateChatUnreadCount: jest.fn(),
 				onlineUsers: undefined,
+				handleUserTyping: jest.fn(),
 			}}
 		>
 			{children}

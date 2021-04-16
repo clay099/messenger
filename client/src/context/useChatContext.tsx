@@ -17,6 +17,7 @@ import { newApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
 import { useSnackBar } from "./useSnackbarContext";
 import { useSocket } from "../hooks/useSocket";
 import { useAuth } from "./useAuthContext";
+import { SocketTypingStatus } from "../interface/Socket";
 
 interface UpdateChatUnreadCountProps {
 	chatId: number;
@@ -34,6 +35,7 @@ interface IChatContext {
 		resetRead,
 	}: UpdateChatUnreadCountProps) => void;
 	onlineUsers: Set<string> | undefined;
+	handleUserTyping: () => void;
 }
 
 export const ChatContext = createContext<IChatContext>({
@@ -45,6 +47,7 @@ export const ChatContext = createContext<IChatContext>({
 	handleNewMessageSubmission: () => null,
 	updateChatUnreadCount: () => null,
 	onlineUsers: undefined,
+	handleUserTyping: () => null,
 });
 
 export const ChatProvider: FunctionComponent = ({ children }) => {
@@ -55,6 +58,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		Message[] | null | undefined
 	>(undefined);
 	const [userChats, setUserChats] = useState<UserChat[] | null>(null);
+	const [userTyping, setUserTyping] = useState<boolean>(false);
 
 	const { updateSnackBarMessage } = useSnackBar();
 	const { loggedInUser } = useAuth();
@@ -171,10 +175,93 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		});
 	}, []);
 
+	const handleUserTyping = useCallback(() => {
+		if (activeChat && loggedInUser && !userTyping) {
+			setUserTyping(true);
+		}
+	}, [activeChat, loggedInUser, userTyping]);
+
+	const handleUserStopTyping = useCallback(() => {
+		setUserTyping(false);
+	}, []);
+
+	useEffect(() => {
+		let timerId: null | ReturnType<typeof setTimeout> = null;
+		if (userTyping) {
+			timerId = setTimeout(handleUserStopTyping, 2000);
+		}
+		return () => {
+			if (timerId) {
+				clearTimeout(timerId);
+			}
+		};
+	}, [userTyping, handleUserStopTyping]);
+
+	const handleReceivedTyping = useCallback(
+		({ email, chatId }: SocketTypingStatus) => {
+			if (email !== loggedInUser?.email) {
+				setUserChats((userChatState) => {
+					if (!userChatState) return null;
+					return userChatState.map((userChat) => {
+						if (chatId !== userChat.chatId) {
+							return userChat;
+						} else {
+							return {
+								...userChat,
+								typing: true,
+							};
+						}
+					});
+				});
+				if (activeChat?.chatId === chatId) {
+					setActiveChat((activeChatState) => {
+						if (!activeChatState) return activeChatState;
+						return {
+							...activeChatState,
+							typing: true,
+						};
+					});
+				}
+			}
+		},
+		[loggedInUser?.email, activeChat?.chatId]
+	);
+
+	const handleReceivedStopTyping = useCallback(
+		({ email, chatId }: SocketTypingStatus) => {
+			if (email !== loggedInUser?.email) {
+				setUserChats((userChatState) => {
+					if (!userChatState) return null;
+					return userChatState.map((userChat) => {
+						if (chatId !== userChat.chatId) {
+							return userChat;
+						} else {
+							return {
+								...userChat,
+								typing: false,
+							};
+						}
+					});
+				});
+				if (activeChat?.chatId === chatId) {
+					setActiveChat((activeChatState) => {
+						if (!activeChatState) return activeChatState;
+						return {
+							...activeChatState,
+							typing: false,
+						};
+					});
+				}
+			}
+		},
+		[loggedInUser?.email, activeChat?.chatId]
+	);
+
 	// submit a new message to the API
 	const handleNewMessageSubmission = useCallback(
 		async (message: string, resetForm: () => void) => {
 			if (activeChat) {
+				handleUserStopTyping();
 				submitMessage(activeChat.chatId, message).then((data) => {
 					if (data.createdMessage) {
 						// this logic now handled by sockets & the below useEffect
@@ -235,6 +322,10 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 		handleNewChat,
 		userChats,
 		handleNewSocketMessage,
+		userTyping,
+		activeChat,
+		handleReceivedTyping,
+		handleReceivedStopTyping,
 	});
 
 	// get active chat messages from API
@@ -300,6 +391,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				handleNewMessageSubmission,
 				updateChatUnreadCount,
 				onlineUsers,
+				handleUserTyping,
 			}}
 		>
 			{children}

@@ -34,7 +34,16 @@ const ChatSummary = ({ chat, handleDrawerToggle }: Props) => {
 				<Typography className={classes.chatUser} variant="h5">
 					{chat.user.username}
 				</Typography>
-				{chat.lastMessage ? (
+				{chat.typing ? (
+					<Typography
+						className={clsx(classes.typing, classes.lastMessage, {
+							[classes.readLastMessage]: chat.unread === 0,
+						})}
+						variant="body1"
+					>
+						Typing...
+					</Typography>
+				) : chat.lastMessage ? (
 					<Typography
 						className={clsx(classes.lastMessage, {
 							[classes.readLastMessage]: chat.unread === 0,
