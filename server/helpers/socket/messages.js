@@ -1,12 +1,9 @@
-module.exports = (io) => {
-	/** Broadcasts the newly created chat message to other users involved with the chatroom
-	 * @param  {object} message
-	 */
-	function newMessage(message) {
-		io.in(message.chatId).emit("new message", {
-			message,
-		});
-	}
-
-	return { newMessage };
+/**Chatroom event handlers*/
+module.exports = (io, socket) => {
+	socket.on("user typing", (chatId, email) => {
+		io.in(chatId).emit("started typing", { email, chatId });
+	});
+	socket.on("user stopped typing", (chatId, email) => {
+		io.in(chatId).emit("stopped typing", { email, chatId });
+	});
 };

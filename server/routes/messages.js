@@ -8,7 +8,7 @@ const createMessage = require("../helpers/createMessage");
 const getUser = require("../helpers/getUser");
 
 module.exports = (io) => {
-	const { newMessage } = require("../helpers/socket/messages")(io);
+	const { newMessage } = require("../helpers/socket/newMessages")(io);
 	/** POST / {message:string} => {id: <integer>, content: <string>, senderEmail: <string>, chatId: <integer>, createdAt: <date>, updatedAt:<date>}[]}
 	 *
 	 * post a message to chat

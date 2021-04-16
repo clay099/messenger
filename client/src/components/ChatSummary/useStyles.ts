@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
 	noLastMessage: {
 		fontStyle: "italic",
 	},
+	typing: {
+		fontStyle: "italic",
+	},
 }));
 
 export default useStyles;

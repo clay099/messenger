@@ -7,3 +7,8 @@ export interface SocketConnection {
 export interface SocketNewMessage {
 	message: Message;
 }
+
+export interface SocketTypingStatus {
+	email: string;
+	chatId: number;
+}

@@ -3,7 +3,11 @@ import { io, Socket } from "socket.io-client";
 import { useSnackBar } from "../context/useSnackbarContext";
 import { useAuth } from "../context/useAuthContext";
 import { UserChat } from "../interface/UserChats";
-import { SocketConnection, SocketNewMessage } from "../interface/Socket";
+import {
+	SocketConnection,
+	SocketNewMessage,
+	SocketTypingStatus,
+} from "../interface/Socket";
 import { SentNewChatApiData } from "../interface/NewChatApiData";
 import { newApiChatDataToUserChat } from "../helpers/newApiChatDataToUserChat";
 import { Message } from "../interface/Message";
@@ -12,12 +16,20 @@ interface Props {
 	handleNewChat: (newUserChat: UserChat) => void;
 	userChats: UserChat[] | null;
 	handleNewSocketMessage: (newMessage: Message) => void;
+	userTyping: boolean;
+	activeChat: UserChat | null | undefined;
+	handleReceivedTyping: ({ email, chatId }: SocketTypingStatus) => void;
+	handleReceivedStopTyping: ({ email, chatId }: SocketTypingStatus) => void;
 }
 
 export const useSocket = ({
 	handleNewChat,
 	userChats,
 	handleNewSocketMessage,
+	userTyping,
+	activeChat,
+	handleReceivedTyping,
+	handleReceivedStopTyping,
 }: Props) => {
 	const [onlineUsers, setOnlineUsers] = useState<Set<string> | undefined>();
 	const [socket, setSocket] = useState<Socket | null>(null);
@@ -211,6 +223,59 @@ export const useSocket = ({
 			}
 		};
 	}, [socket, loggedInUser, handleNewChat]);
+
+	useEffect(() => {
+		if (socket) {
+			if (loggedInUser && activeChat) {
+				if (userTyping) {
+					socket.emit(
+						"user typing",
+						activeChat.chatId,
+						loggedInUser.email
+					);
+				}
+			}
+		}
+
+		// clean up if user was typing send a message that they stopped
+		return () => {
+			if (socket) {
+				if (loggedInUser && activeChat) {
+					if (userTyping) {
+						socket.emit(
+							"user stopped typing",
+							activeChat.chatId,
+							loggedInUser.email
+						);
+					}
+				}
+			}
+		};
+	}, [socket, activeChat, loggedInUser, userTyping]);
+
+	useEffect(() => {
+		if (socket) {
+			socket.on("started typing", handleReceivedTyping);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("started typing", handleReceivedTyping);
+			}
+		};
+	}, [socket, handleReceivedTyping]);
+
+	useEffect(() => {
+		if (socket) {
+			socket.on("stopped typing", handleReceivedStopTyping);
+		}
+
+		return () => {
+			if (socket) {
+				socket.off("stopped typing", handleReceivedStopTyping);
+			}
+		};
+	}, [socket, handleReceivedStopTyping]);
 
 	return { onlineUsers };
 };

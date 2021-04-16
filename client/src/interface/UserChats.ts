@@ -6,6 +6,7 @@ export interface UserChat {
 	user: { username: string; email: string };
 	unread: number;
 	lastMessage?: string;
+	typing?: boolean;
 }
 
 export interface UserChatsApiData {

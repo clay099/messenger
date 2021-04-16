@@ -6,6 +6,7 @@ import useStyles from "./useStyles";
 import { useDebouncedCallback } from "use-debounce";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ActiveChatMessage from "./ActiveChatMessage/ActiveChatMessage";
+import ActiveChatTyping from "./ActiveChatTyping/ActiveChatTyping";
 
 const ActiveChat = () => {
 	const classes = useStyles();
@@ -14,7 +15,7 @@ const ActiveChat = () => {
 		new Map<number, number>()
 	);
 
-	const { activeChatMessages, updateChatUnreadCount } = useChat();
+	const { activeChatMessages, updateChatUnreadCount, activeChat } = useChat();
 	const chatContainerRef = useRef<HTMLDivElement>(null);
 
 	// when you change chats start from bottom otherwise grab where you left off.
@@ -98,6 +99,7 @@ const ActiveChat = () => {
 					<ActiveChatMessage key={message.id} message={message} />
 				))
 			)}
+			{activeChat?.typing && <ActiveChatTyping activeChat={activeChat} />}
 		</div>
 	);
 };
