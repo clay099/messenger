@@ -8,7 +8,7 @@ const login = async (email: string, password: string): Promise<AuthApiData> => {
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/login`
+			? `${process.env.REACT_APP_API_URL}login`
 			: `/login`,
 		fetchOptions
 	)

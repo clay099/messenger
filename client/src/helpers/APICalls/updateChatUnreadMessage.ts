@@ -12,7 +12,7 @@ export default async function updateChatUnreadMessage(
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/api/chat/${chatId}`
+			? `${process.env.REACT_APP_API_URL}api/chat/${chatId}`
 			: `/api/chat/${chatId}`,
 		fetchOptions
 	)

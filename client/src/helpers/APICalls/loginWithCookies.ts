@@ -6,7 +6,7 @@ const loginWithCookies = async (): Promise<AuthApiData> => {
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/loginwithcookies`
+			? `${process.env.REACT_APP_API_URL}loginwithcookies`
 			: `/loginwithcookies`,
 		fetchOptions
 	)

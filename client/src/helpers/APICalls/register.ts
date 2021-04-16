@@ -12,7 +12,7 @@ const register = async (
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/register`
+			? `${process.env.REACT_APP_API_URL}register`
 			: `/register`,
 		fetchOptions
 	)

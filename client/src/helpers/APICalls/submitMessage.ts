@@ -11,7 +11,7 @@ export default async function submitMessage(
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/api/message/${chatId}`
+			? `${process.env.REACT_APP_API_URL}api/message/${chatId}`
 			: `/api/message/${chatId}`,
 		fetchOptions
 	)

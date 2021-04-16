@@ -7,7 +7,7 @@ export async function getChats(): Promise<UserChatsApiData> {
 
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/api/chat`
+			? `${process.env.REACT_APP_API_URL}api/chat`
 			: "/api/chat",
 		fetchOptions
 	)

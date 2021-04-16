@@ -12,7 +12,7 @@ export async function searchUsers({
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/api/users?search=${search}`
+			? `${process.env.REACT_APP_API_URL}api/users?search=${search}`
 			: `/api/users?search=${search}`,
 		fetchOptions
 	)
