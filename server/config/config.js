@@ -28,5 +28,6 @@ module.exports = {
 		dialect: process.env.DIALECT || "postgres",
 		BCRYPT_WORK_FACTOR: 12,
 		JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
+		use_env_variable: "DATABASE_URL",
 	},
 };
