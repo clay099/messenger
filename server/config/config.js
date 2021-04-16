@@ -26,6 +26,9 @@ module.exports = {
 		database: process.env.DB_NAME,
 		host: process.env.DB_HOSTNAME,
 		dialect: process.env.DIALECT || "postgres",
+		dialectOptions: {
+			ssl: true,
+		},
 		BCRYPT_WORK_FACTOR: 12,
 		JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
 		use_env_variable: "DATABASE_URL",
