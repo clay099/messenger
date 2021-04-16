@@ -277,7 +277,7 @@ export const ChatProvider: FunctionComponent = ({ children }) => {
 				resetForm();
 			}
 		},
-		[activeChat, updateSnackBarMessage]
+		[activeChat, updateSnackBarMessage, handleUserStopTyping]
 	);
 
 	// when sockets receive a new message save the data for relevant chat context so the user can display & reset the socketContext state to be ready to receive a new message

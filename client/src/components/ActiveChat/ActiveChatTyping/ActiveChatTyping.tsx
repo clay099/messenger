@@ -3,7 +3,6 @@ import Box from "@material-ui/core/Box";
 import AvatarDisplay from "../../AvatarDisplay/AvatarDisplay";
 import useStyles from "./useStyles";
 import { UserChat } from "../../../interface/UserChats";
-import clsx from "clsx";
 import loadingGif from "../../../Images/loading.gif";
 
 interface Props {
