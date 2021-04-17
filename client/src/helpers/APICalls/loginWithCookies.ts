@@ -7,7 +7,12 @@ const loginWithCookies = async (): Promise<AuthApiData> => {
 		withCredentials: true,
 		credentials: "include",
 	};
-	return await fetch(`/loginwithcookies`, fetchOptions)
+	return await fetch(
+		process.env.REACT_APP_API_URL
+			? `${process.env.REACT_APP_API_URL}loginwithcookies`
+			: `/loginwithcookies`,
+		fetchOptions
+	)
 		.then((res) => res.json())
 		.catch(() => ({
 			error: { message: "Unable to connect to server. Please try again" },
