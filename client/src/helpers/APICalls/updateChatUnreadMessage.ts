@@ -10,12 +10,7 @@ export default async function updateChatUnreadMessage(
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ unread }),
 	};
-	return await fetch(
-		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}api/chat/${chatId}`
-			: `/api/chat/${chatId}`,
-		fetchOptions
-	)
+	return await fetch(`/api/chat/${chatId}`, fetchOptions)
 		.then((res) => res.json())
 		.catch(() => ({
 			error: { message: "Unable to connect to server. Please try again" },

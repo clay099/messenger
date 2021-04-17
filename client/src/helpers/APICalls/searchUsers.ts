@@ -10,12 +10,7 @@ export async function searchUsers({
 	const fetchOptions = {
 		method: "GET",
 	};
-	return await fetch(
-		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}api/users?search=${search}`
-			: `/api/users?search=${search}`,
-		fetchOptions
-	)
+	return await fetch(`/api/users?search=${search}`, fetchOptions)
 		.then((res) => res.json())
 		.catch(() => ({
 			error: { message: "Unable to connect to server. Please try again" },

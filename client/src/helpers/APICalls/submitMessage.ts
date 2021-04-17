@@ -9,12 +9,7 @@ export default async function submitMessage(
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ message }),
 	};
-	return await fetch(
-		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}api/message/${chatId}`
-			: `/api/message/${chatId}`,
-		fetchOptions
-	)
+	return await fetch(`/api/message/${chatId}`, fetchOptions)
 		.then((res) => res.json())
 		.catch(() => ({
 			error: { message: "Unable to connect to server. Please try again" },
