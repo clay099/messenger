@@ -1,15 +1,13 @@
 import { AuthApiData } from "../../interface/AuthApiData";
+import { FetchOptions } from "../../interface/FetchOptions";
 
 const loginWithCookies = async (): Promise<AuthApiData> => {
-	const fetchOptions = {
+	const fetchOptions: FetchOptions = {
 		method: "GET",
+		withCredentials: true,
+		credentials: "include",
 	};
-	return await fetch(
-		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}loginwithcookies`
-			: `/loginwithcookies`,
-		fetchOptions
-	)
+	return await fetch(`/loginwithcookies`, fetchOptions)
 		.then((res) => res.json())
 		.catch(() => ({
 			error: { message: "Unable to connect to server. Please try again" },
