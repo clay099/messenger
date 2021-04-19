@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { useSnackBar } from "../context/useSnackbarContext";
 import { useAuth } from "../context/useAuthContext";
 import { UserChat } from "../interface/UserChats";
@@ -70,12 +70,11 @@ export const useSocket = ({
 
 	useEffect(() => {
 		if (!socket && process.env.REACT_APP_API_URL) {
-			// setSocket(
-			// 	io(process.env.REACT_APP_API_URL, {
-			// 		withCredentials: true,
-			// 	})
-			// );
-			setSocket(null);
+			setSocket(
+				io(process.env.REACT_APP_API_URL, {
+					withCredentials: true,
+				})
+			);
 		}
 	}, [socket]);
 
