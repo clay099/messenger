@@ -1,8 +1,5 @@
 const corsOptions = {
-	origin: [
-		"http://localhost:3000",
-		"https://laughing-brown-e9e4f0.netlify.app",
-	],
+	origin: ["http://localhost:3000", "https://messenger.vercel.app"],
 	methods: ["GET", "POST", "PATCH"],
 	credentials: true,
 };
