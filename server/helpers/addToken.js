@@ -5,6 +5,7 @@ function addToken(res, token) {
 		expires: new Date(Date.now() + 24 * 60 * 60 * 100),
 		httpOnly: true,
 		sameSite: "none",
+		secure: true,
 	});
 }
 
