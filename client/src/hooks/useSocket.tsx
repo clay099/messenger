@@ -68,15 +68,15 @@ export const useSocket = ({
 		}
 	}, [userChats, handleJoinChatRooms]);
 
-	useEffect(() => {
-		if (!socket && process.env.REACT_APP_API_URL) {
-			setSocket(
-				io(process.env.REACT_APP_API_URL, {
-					withCredentials: true,
-				})
-			);
-		}
-	}, [socket]);
+	// useEffect(() => {
+	// 	if (!socket && process.env.REACT_APP_API_URL) {
+	// 		setSocket(
+	// 			io(process.env.REACT_APP_API_URL, {
+	// 				withCredentials: true,
+	// 			})
+	// 		);
+	// 	}
+	// }, [socket]);
 
 	useEffect(() => {
 		const disconnectCallback = () => {
