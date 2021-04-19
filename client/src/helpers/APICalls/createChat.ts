@@ -10,7 +10,6 @@ export async function createChat({ email }: Props): Promise<NewChatApiData> {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ email }),
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(

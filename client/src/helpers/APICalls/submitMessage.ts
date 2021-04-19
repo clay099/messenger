@@ -9,7 +9,6 @@ export default async function submitMessage(
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ message }),
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(

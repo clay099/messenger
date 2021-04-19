@@ -10,7 +10,6 @@ export default async function updateChatUnreadMessage(
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ unread }),
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(
