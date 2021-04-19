@@ -10,12 +10,12 @@ export default async function updateChatUnreadMessage(
 		method: "PATCH",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ unread }),
-		withCredentials: true,
 		credentials: "include",
 	};
+	console.log({ url: process.env.REACT_APP_API_URL });
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/api/chat/${chatId}`
+			? `${process.env.REACT_APP_API_URL}api/chat/${chatId}`
 			: `/api/chat/${chatId}`,
 		fetchOptions
 	)

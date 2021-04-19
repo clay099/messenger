@@ -10,7 +10,6 @@ export async function searchUsers({
 }: Props): Promise<SearchUsersApiData> {
 	const fetchOptions: FetchOptions = {
 		method: "GET",
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(

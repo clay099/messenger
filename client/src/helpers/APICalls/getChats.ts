@@ -4,7 +4,6 @@ import { UserChatsApiData } from "../../interface/UserChats";
 export async function getChats(): Promise<UserChatsApiData> {
 	const fetchOptions: FetchOptions = {
 		method: "GET",
-		withCredentials: true,
 		credentials: "include",
 	};
 

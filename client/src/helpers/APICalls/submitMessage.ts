@@ -9,12 +9,11 @@ export default async function submitMessage(
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ message }),
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(
 		process.env.REACT_APP_API_URL
-			? `${process.env.REACT_APP_API_URL}/api/message/${chatId}`
+			? `${process.env.REACT_APP_API_URL}api/message/${chatId}`
 			: `/api/message/${chatId}`,
 		fetchOptions
 	)

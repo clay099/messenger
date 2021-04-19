@@ -9,7 +9,6 @@ export async function getChatMessages({
 }: Props): Promise<MessageApiData> {
 	const fetchOptions: FetchOptions = {
 		method: "GET",
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(

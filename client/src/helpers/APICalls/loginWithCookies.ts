@@ -4,7 +4,6 @@ import { FetchOptions } from "../../interface/FetchOptions";
 const loginWithCookies = async (): Promise<AuthApiData> => {
 	const fetchOptions: FetchOptions = {
 		method: "GET",
-		withCredentials: true,
 		credentials: "include",
 	};
 	return await fetch(

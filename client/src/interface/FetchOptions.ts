@@ -4,6 +4,5 @@ export interface FetchOptions {
 		"Content-Type": string;
 	};
 	body?: string;
-	withCredentials: boolean;
 	credentials: RequestCredentials;
 }
