@@ -1,5 +1,5 @@
 const corsOptions = {
-	origin: ["http://localhost:3000", "https://messenger-front-end.vercel.app"],
+	origin: "*",
 	methods: ["GET", "POST", "PATCH"],
 	credentials: true,
 };
