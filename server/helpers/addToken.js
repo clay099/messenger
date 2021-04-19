@@ -4,8 +4,8 @@ function addToken(res, token) {
 		// lasts for 24 hours
 		expires: new Date(Date.now() + 24 * 60 * 60 * 100),
 		httpOnly: true,
-		sameSite: "none",
-		secure: true,
+		sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+		secure: process.env.NODE_ENV === "production" ? true : false,
 	});
 }
 
