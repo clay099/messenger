@@ -4,6 +4,7 @@ function addToken(res, token) {
 		// lasts for 24 hours
 		expires: new Date(Date.now() + 24 * 60 * 60 * 100),
 		httpOnly: true,
+		sameSite: "none",
 	});
 }
 
