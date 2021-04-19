@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 import { AuthApiData, AuthApiDataSuccess } from "../interface/AuthApiData";
 import { User } from "../interface/User";
 import loginWithCookies from "../helpers/APICalls/loginWithCookies";
+import logoutAPI from "../helpers/APICalls/logout";
 
 interface IAuthContext {
 	loggedInUser: User | null | undefined;
@@ -38,7 +39,7 @@ export const AuthProvider: FunctionComponent = ({ children }) => {
 
 	const logout = useCallback(async () => {
 		// needed to remove token cookie
-		await fetch("/logout")
+		await logoutAPI()
 			.then(() => {
 				history.push("/login");
 				setLoggedInUser(null);

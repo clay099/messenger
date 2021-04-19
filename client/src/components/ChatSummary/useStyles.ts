@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
 		borderRadius: theme.shape.borderRadius,
 		"&:hover": { cursor: "pointer" },
 	},
-	chatTextContainer: { padding: "0 1rem", width: "calc(100% - 2rem)" },
+	chatTextContainer: { padding: "0 1rem", width: "calc(100% - 4rem)" },
 	chatUser: { fontSize: "14px", fontWeight: 600 },
 	lastMessage: {
 		fontSize: "12px",
