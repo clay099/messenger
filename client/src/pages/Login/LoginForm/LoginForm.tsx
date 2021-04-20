@@ -53,7 +53,11 @@ export default function Login({ handleSubmit }: Props) {
 				>
 					<TextField
 						id="email"
-						label={<p className={classes.label}>E-mail address</p>}
+						label={
+							<Typography className={classes.label}>
+								E-mail address
+							</Typography>
+						}
 						fullWidth
 						margin="normal"
 						InputLabelProps={{
