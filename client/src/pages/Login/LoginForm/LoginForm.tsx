@@ -5,6 +5,7 @@ import { Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Typography from "@material-ui/core/Typography";
 import useStyles from "./useStyles";
+import { CircularProgress } from "@material-ui/core";
 
 interface Props {
 	handleSubmit: (
@@ -45,7 +46,14 @@ export default function Login({ handleSubmit }: Props) {
 			})}
 			onSubmit={handleSubmit}
 		>
-			{({ handleSubmit, handleChange, values, touched, errors }) => (
+			{({
+				handleSubmit,
+				handleChange,
+				values,
+				touched,
+				errors,
+				isSubmitting,
+			}) => (
 				<form
 					onSubmit={handleSubmit}
 					className={classes.form}
@@ -101,7 +109,6 @@ export default function Login({ handleSubmit }: Props) {
 						value={values.password}
 						onChange={handleChange}
 					/>
-
 					<Box textAlign="center">
 						<Button
 							type="submit"
@@ -110,10 +117,13 @@ export default function Login({ handleSubmit }: Props) {
 							color="primary"
 							className={classes.submit}
 						>
-							Login
+							{isSubmitting ? (
+								<CircularProgress style={{ color: "white" }} />
+							) : (
+								"Login"
+							)}
 						</Button>
 					</Box>
-
 					<div style={{ height: 95 }} />
 				</form>
 			)}
